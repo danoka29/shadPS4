@@ -61,6 +61,11 @@ bool patchShaders();
 bool isRdocEnabled();
 u32 vblankDiv();
 
+#ifdef SHADER_SKIPPING
+bool ShouldSkipShader(const u64& hash);
+void SetSkippedShaderHashes(const std::string& game_id);
+#endif
+
 void setDebugDump(bool enable);
 void setCollectShaderForDebug(bool enable);
 void setShowSplash(bool enable);

@@ -75,6 +75,11 @@ static bool compatibilityData = false;
 static bool checkCompatibilityOnStartup = false;
 static std::string trophyKey;
 
+#ifdef SHADER_SKIPPING
+std::unordered_map<std::string, std::vector<std::string>> all_skipped_shader_hashes = {};
+std::vector<u64> current_skipped_shader_hashes = {};
+#endif
+
 // Gui
 static bool load_game_size = true;
 std::vector<std::filesystem::path> settings_install_dirs = {};
@@ -312,6 +317,25 @@ void setDebugDump(bool enable) {
 void setCollectShaderForDebug(bool enable) {
     isShaderDebug = enable;
 }
+
+#ifdef SHADER_SKIPPING
+bool ShouldSkipShader(const u64& hash) {
+    return std::find(current_skipped_shader_hashes.begin(), current_skipped_shader_hashes.end(),
+                     hash) != current_skipped_shader_hashes.end();
+}
+
+void SetSkippedShaderHashes(const std::string& game_id) {
+    current_skipped_shader_hashes.clear();
+    current_skipped_shader_hashes.reserve(all_skipped_shader_hashes.size());
+    auto it = all_skipped_shader_hashes.find(game_id);
+    if (it != all_skipped_shader_hashes.end()) {
+        const auto& hashes = it->second;
+        std::transform(hashes.begin(), hashes.end(),
+                       std::back_inserter(current_skipped_shader_hashes),
+                       [](const std::string& hash) { return (u32)std::stoul(hash, nullptr, 16); });
+    }
+}
+#endif
 
 void setShowSplash(bool enable) {
     isShowSplash = enable;
@@ -735,6 +759,20 @@ void load(const std::filesystem::path& path) {
         const toml::value& keys = data.at("Keys");
         trophyKey = toml::find_or<std::string>(keys, "TrophyKey", "");
     }
+
+#ifdef SHADER_SKIPPING
+    if (data.contains("ShaderSkip")) {
+        const toml::value& shader_skip_data = data.at("ShaderSkip");
+        all_skipped_shader_hashes.clear();
+        for (const auto& [game_id, hash_list] : shader_skip_data.as_table()) {
+            std::vector<std::string> hashes;
+            for (const auto& hash : hash_list.as_array()) {
+                hashes.push_back(hash.as_string());
+            }
+            all_skipped_shader_hashes[game_id] = hashes;
+        }
+    }
+#endif
 }
 
 void save(const std::filesystem::path& path) {
@@ -815,6 +853,18 @@ void save(const std::filesystem::path& path) {
         std::string{fmt::UTF(settings_addon_install_dir.u8string()).data};
     data["GUI"]["emulatorLanguage"] = emulator_language;
     data["Settings"]["consoleLanguage"] = m_language;
+
+#ifdef SHADER_SKIPPING
+    toml::value shader_skip_data;
+    for (const auto& [game_id, hashes] : all_skipped_shader_hashes) {
+        std::vector<toml::value> hash_values;
+        for (const auto& hash : hashes) {
+            hash_values.emplace_back(hash);
+        }
+        shader_skip_data[game_id] = hash_values;
+    }
+    data["ShaderSkip"] = shader_skip_data;
+#endif
 
     std::ofstream file(path, std::ios::binary);
     file << data;

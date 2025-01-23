@@ -144,6 +144,10 @@ void Emulator::Run(const std::filesystem::path& file, const std::vector<std::str
         });
         timer->start(60000); // 60000 ms = 1 minute
 #endif
+
+#ifdef SHADER_SKIPPING
+        Config::SetSkippedShaderHashes(id);
+#endif
         title = param_sfo->GetString("TITLE").value_or("Unknown title");
         LOG_INFO(Loader, "Game id: {} Title: {}", id, title);
         fw_version = param_sfo->GetInteger("SYSTEM_VER").value_or(0x4700000);
