@@ -7,8 +7,8 @@
 #include <fmt/xchar.h> // for wstring support
 #include <toml.hpp>
 
-#include "common/path_util.h"
 #include "common/logging/log.h"
+#include "common/path_util.h"
 #include "config.h"
 #include "logging/formatter.h"
 #include "version.h"
