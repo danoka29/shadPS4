@@ -8,6 +8,7 @@
 #include <toml.hpp>
 
 #include "common/path_util.h"
+#include "common/logging/log.h"
 #include "config.h"
 #include "logging/formatter.h"
 #include "version.h"
@@ -330,9 +331,13 @@ void SetSkippedShaderHashes(const std::string& game_id) {
     auto it = all_skipped_shader_hashes.find(game_id);
     if (it != all_skipped_shader_hashes.end()) {
         const auto& hashes = it->second;
-        std::transform(hashes.begin(), hashes.end(),
-                       std::back_inserter(current_skipped_shader_hashes),
-                       [](const std::string& hash) { return (u32)std::stoul(hash, nullptr, 16); });
+        for (auto& hash : hashes) {
+            try {
+                current_skipped_shader_hashes.push_back((u64)std::stoul(hash, nullptr, 16));
+            } catch (std::invalid_argument const& ex) {
+                LOG_ERROR(Config, "Invalid shader hash found: {}", hash);
+            }
+        }
     }
 }
 #endif
