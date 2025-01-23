@@ -860,15 +860,17 @@ void save(const std::filesystem::path& path) {
     data["Settings"]["consoleLanguage"] = m_language;
 
 #ifdef SHADER_SKIPPING
-    toml::value shader_skip_data;
-    for (const auto& [game_id, hashes] : all_skipped_shader_hashes) {
-        std::vector<toml::value> hash_values;
-        for (const auto& hash : hashes) {
-            hash_values.emplace_back(hash);
+    if (!all_skipped_shader_hashes.empty()) {
+        toml::value shader_skip_data;
+        for (const auto& [game_id, hashes] : all_skipped_shader_hashes) {
+            std::vector<toml::value> hash_values;
+            for (const auto& hash : hashes) {
+                hash_values.emplace_back(hash);
+            }
+            shader_skip_data[game_id] = hash_values;
         }
-        shader_skip_data[game_id] = hash_values;
+        data["ShaderSkip"] = shader_skip_data;
     }
-    data["ShaderSkip"] = shader_skip_data;
 #endif
 
     std::ofstream file(path, std::ios::binary);
