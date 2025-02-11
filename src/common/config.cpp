@@ -333,7 +333,7 @@ void SetSkippedShaderHashes(const std::string& game_id) {
         const auto& hashes = it->second;
         for (auto& hash : hashes) {
             try {
-                current_skipped_shader_hashes.push_back((u64)std::stoul(hash, nullptr, 16));
+                current_skipped_shader_hashes.push_back((u64)std::stoull(hash, nullptr, 16));
             } catch (std::invalid_argument const& ex) {
                 LOG_ERROR(Config, "Invalid shader hash found: {}", hash);
             }
