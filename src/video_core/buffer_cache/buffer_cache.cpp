@@ -17,7 +17,7 @@
 
 namespace VideoCore {
 
-static constexpr size_t GdsBufferSize = 64_KB;
+static constexpr size_t DataShareBufferSize = 64_KB;
 static constexpr size_t StagingBufferSize = 1_GB;
 static constexpr size_t UboStreamBufferSize = 64_MB;
 
@@ -28,13 +28,15 @@ BufferCache::BufferCache(const Vulkan::Instance& instance_, Vulkan::Scheduler& s
       texture_cache{texture_cache_}, tracker{tracker_},
       staging_buffer{instance, scheduler, MemoryUsage::Upload, StagingBufferSize},
       stream_buffer{instance, scheduler, MemoryUsage::Stream, UboStreamBufferSize},
-      gds_buffer{instance, scheduler, MemoryUsage::Stream, 0, AllFlags, GdsBufferSize},
+      gds_buffer{instance, scheduler, MemoryUsage::Stream, 0, AllFlags, DataShareBufferSize},
+      lds_buffer{instance, scheduler, MemoryUsage::DeviceLocal, 0, AllFlags, DataShareBufferSize},
       memory_tracker{&tracker} {
     Vulkan::SetObjectName(instance.GetDevice(), gds_buffer.Handle(), "GDS Buffer");
+    Vulkan::SetObjectName(instance.GetDevice(), lds_buffer.Handle(), "LDS Buffer");
 
     // Ensure the first slot is used for the null buffer
     const auto null_id =
-        slot_buffers.insert(instance, scheduler, MemoryUsage::DeviceLocal, 0, ReadFlags, 16);
+        slot_buffers.insert(instance, scheduler, MemoryUsage::DeviceLocal, 0, AllFlags, 16);
     ASSERT(null_id.index == 0);
     const vk::Buffer& null_buffer = slot_buffers[null_id].buffer;
     Vulkan::SetObjectName(instance.GetDevice(), null_buffer, "Null Buffer");

@@ -175,7 +175,7 @@ RenderState Rasterizer::PrepareRenderState(u32 mrt_mask) {
         const bool is_depth_clear = regs.depth_render_control.depth_clear_enable ||
                                     texture_cache.IsMetaCleared(htile_address, slice);
         const bool is_stencil_clear = regs.depth_render_control.stencil_clear_enable;
-        ASSERT(desc.view_info.range.extent.layers == 1);
+        ASSERT(desc.view_info.range.extent.levels == 1);
 
         state.width = std::min<u32>(state.width, image.info.size.width);
         state.height = std::min<u32>(state.height, image.info.size.height);
@@ -435,28 +435,6 @@ bool Rasterizer::BindResources(const Pipeline* pipeline) {
     if (pipeline->IsCompute()) {
         const auto& info = pipeline->GetStage(Shader::LogicalStage::Compute);
 
-        // Most of the time when a metadata is updated with a shader it gets cleared. It means
-        // we can skip the whole dispatch and update the tracked state instead. Also, it is not
-        // intended to be consumed and in such rare cases (e.g. HTile introspection, CRAA) we
-        // will need its full emulation anyways. For cases of metadata read a warning will be
-        // logged.
-        const auto IsMetaUpdate = [&](const auto& desc) {
-            const auto sharp = desc.GetSharp(info);
-            const VAddr address = sharp.base_address;
-            if (desc.is_written) {
-                // Assume all slices were updates
-                if (texture_cache.ClearMeta(address)) {
-                    LOG_TRACE(Render_Vulkan, "Metadata update skipped");
-                    return true;
-                }
-            } else {
-                if (texture_cache.IsMeta(address)) {
-                    LOG_WARNING(Render_Vulkan, "Unexpected metadata read by a CS shader (buffer)");
-                }
-            }
-            return false;
-        };
-
         // Assume if a shader reads and writes metas at the same time, it is a copy shader.
         bool meta_read = false;
         for (const auto& desc : info.buffers) {
@@ -469,23 +447,26 @@ bool Rasterizer::BindResources(const Pipeline* pipeline) {
             }
         }
 
-        for (const auto& desc : info.texture_buffers) {
-            if (!desc.is_written) {
-                const VAddr address = desc.GetSharp(info).base_address;
-                meta_read = texture_cache.IsMeta(address);
-            }
-        }
-
+        // Most of the time when a metadata is updated with a shader it gets cleared. It means
+        // we can skip the whole dispatch and update the tracked state instead. Also, it is not
+        // intended to be consumed and in such rare cases (e.g. HTile introspection, CRAA) we
+        // will need its full emulation anyways. For cases of metadata read a warning will be
+        // logged.
         if (!meta_read) {
             for (const auto& desc : info.buffers) {
-                if (IsMetaUpdate(desc)) {
-                    return false;
-                }
-            }
-
-            for (const auto& desc : info.texture_buffers) {
-                if (IsMetaUpdate(desc)) {
-                    return false;
+                const auto sharp = desc.GetSharp(info);
+                const VAddr address = sharp.base_address;
+                if (desc.is_written) {
+                    // Assume all slices were updates
+                    if (texture_cache.ClearMeta(address)) {
+                        LOG_TRACE(Render_Vulkan, "Metadata update skipped");
+                        return false;
+                    }
+                } else {
+                    if (texture_cache.IsMeta(address)) {
+                        LOG_WARNING(Render_Vulkan,
+                                    "Unexpected metadata read by a CS shader (buffer)");
+                    }
                 }
             }
         }
@@ -541,17 +522,20 @@ void Rasterizer::BindBuffers(const Shader::Info& stage, Shader::Backend::Binding
         }
     }
 
-    texbuffer_bindings.clear();
-
-    for (const auto& desc : stage.texture_buffers) {
-        const auto vsharp = desc.GetSharp(stage);
-        if (vsharp.base_address != 0 && vsharp.GetSize() > 0 &&
-            vsharp.GetDataFmt() != AmdGpu::DataFormat::FormatInvalid) {
-            const auto buffer_id = buffer_cache.FindBuffer(vsharp.base_address, vsharp.GetSize());
-            texbuffer_bindings.emplace_back(buffer_id, vsharp);
-        } else {
-            texbuffer_bindings.emplace_back(VideoCore::BufferId{}, vsharp);
-        }
+    // Bind a SSBO to act as shared memory in case of not being able to use a workgroup buffer
+    // (e.g. when the compute shared memory is bigger than the GPU's shared memory)
+    if (stage.has_emulated_shared_memory) {
+        const auto* lds_buf = buffer_cache.GetLdsBuffer();
+        buffer_infos.emplace_back(lds_buf->Handle(), 0, lds_buf->SizeBytes());
+        set_writes.push_back({
+            .dstSet = VK_NULL_HANDLE,
+            .dstBinding = binding.unified++,
+            .dstArrayElement = 0,
+            .descriptorCount = 1,
+            .descriptorType = vk::DescriptorType::eStorageBuffer,
+            .pBufferInfo = &buffer_infos.back(),
+        });
+        ++binding.buffer;
     }
 
     // Bind the flattened user data buffer as a UBO so it's accessible to the shader
@@ -571,11 +555,10 @@ void Rasterizer::BindBuffers(const Shader::Info& stage, Shader::Backend::Binding
     }
 
     // Second pass to re-bind buffers that were updated after binding
-    auto& null_buffer = buffer_cache.GetBuffer(VideoCore::NULL_BUFFER_ID);
     for (u32 i = 0; i < buffer_bindings.size(); i++) {
         const auto& [buffer_id, vsharp] = buffer_bindings[i];
         const auto& desc = stage.buffers[i];
-        const bool is_storage = desc.IsStorage(vsharp);
+        const bool is_storage = desc.IsStorage(vsharp, pipeline_cache.GetProfile());
         if (!buffer_id) {
             if (desc.is_gds_buffer) {
                 const auto* gds_buf = buffer_cache.GetGdsBuffer();
@@ -583,11 +566,13 @@ void Rasterizer::BindBuffers(const Shader::Info& stage, Shader::Backend::Binding
             } else if (instance.IsNullDescriptorSupported()) {
                 buffer_infos.emplace_back(VK_NULL_HANDLE, 0, VK_WHOLE_SIZE);
             } else {
+                auto& null_buffer = buffer_cache.GetBuffer(VideoCore::NULL_BUFFER_ID);
                 buffer_infos.emplace_back(null_buffer.Handle(), 0, VK_WHOLE_SIZE);
             }
         } else {
-            const auto [vk_buffer, offset] = buffer_cache.ObtainBuffer(
-                vsharp.base_address, vsharp.GetSize(), desc.is_written, false, buffer_id);
+            const auto [vk_buffer, offset] =
+                buffer_cache.ObtainBuffer(vsharp.base_address, vsharp.GetSize(), desc.is_written,
+                                          desc.is_formatted, buffer_id);
             const u32 alignment =
                 is_storage ? instance.StorageMinAlignment() : instance.UniformMinAlignment();
             const u32 offset_aligned = Common::AlignDown(offset, alignment);
@@ -602,6 +587,9 @@ void Rasterizer::BindBuffers(const Shader::Info& stage, Shader::Backend::Binding
                                           vk::PipelineStageFlagBits2::eAllCommands)) {
                 buffer_barriers.emplace_back(*barrier);
             }
+            if (desc.is_written && desc.is_formatted) {
+                texture_cache.InvalidateMemoryFromGPU(vsharp.base_address, vsharp.GetSize());
+            }
         }
 
         set_writes.push_back({
@@ -612,56 +600,6 @@ void Rasterizer::BindBuffers(const Shader::Info& stage, Shader::Backend::Binding
             .descriptorType = is_storage ? vk::DescriptorType::eStorageBuffer
                                          : vk::DescriptorType::eUniformBuffer,
             .pBufferInfo = &buffer_infos.back(),
-        });
-        ++binding.buffer;
-    }
-
-    for (u32 i = 0; i < texbuffer_bindings.size(); i++) {
-        const auto& [buffer_id, vsharp] = texbuffer_bindings[i];
-        const auto& desc = stage.texture_buffers[i];
-        // Fallback format for null buffer view; never used in valid buffer case.
-        const auto data_fmt = vsharp.GetDataFmt() != AmdGpu::DataFormat::FormatInvalid
-                                  ? vsharp.GetDataFmt()
-                                  : AmdGpu::DataFormat::Format8;
-        const u32 fmt_stride = AmdGpu::NumBits(data_fmt) >> 3;
-        vk::BufferView buffer_view;
-        if (buffer_id) {
-            const u32 alignment = instance.TexelBufferMinAlignment();
-            const auto [vk_buffer, offset] = buffer_cache.ObtainBuffer(
-                vsharp.base_address, vsharp.GetSize(), desc.is_written, true, buffer_id);
-            const u32 buf_stride = vsharp.GetStride();
-            ASSERT_MSG(buf_stride % fmt_stride == 0,
-                       "Texel buffer stride must match format stride");
-            const u32 offset_aligned = Common::AlignDown(offset, alignment);
-            const u32 adjust = offset - offset_aligned;
-            ASSERT(adjust % fmt_stride == 0);
-            push_data.AddTexelOffset(binding.buffer, buf_stride / fmt_stride, adjust / fmt_stride);
-            buffer_view = vk_buffer->View(offset_aligned, vsharp.GetSize() + adjust,
-                                          desc.is_written, data_fmt, vsharp.GetNumberFmt());
-            if (auto barrier =
-                    vk_buffer->GetBarrier(desc.is_written ? vk::AccessFlagBits2::eShaderWrite
-                                                          : vk::AccessFlagBits2::eShaderRead,
-                                          vk::PipelineStageFlagBits2::eAllCommands)) {
-                buffer_barriers.emplace_back(*barrier);
-            }
-            if (desc.is_written) {
-                texture_cache.InvalidateMemoryFromGPU(vsharp.base_address, vsharp.GetSize());
-            }
-        } else if (instance.IsNullDescriptorSupported()) {
-            buffer_view = VK_NULL_HANDLE;
-        } else {
-            buffer_view =
-                null_buffer.View(0, fmt_stride, desc.is_written, data_fmt, vsharp.GetNumberFmt());
-        }
-
-        set_writes.push_back({
-            .dstSet = VK_NULL_HANDLE,
-            .dstBinding = binding.unified++,
-            .dstArrayElement = 0,
-            .descriptorCount = 1,
-            .descriptorType = desc.is_written ? vk::DescriptorType::eStorageTexelBuffer
-                                              : vk::DescriptorType::eUniformTexelBuffer,
-            .pTexelBufferView = &buffer_views.emplace_back(buffer_view),
         });
         ++binding.buffer;
     }
@@ -1047,14 +985,8 @@ void Rasterizer::UpdateDynamicState(const GraphicsPipeline& pipeline) {
     const auto cmdbuf = scheduler.CommandBuffer();
     cmdbuf.setBlendConstants(&regs.blend_constants.red);
 
-    if (instance.IsColorWriteEnableSupported()) {
-        const auto& write_masks = pipeline.GetWriteMasks();
-        std::array<vk::Bool32, Liverpool::NumColorBuffers> write_ens{};
-        std::transform(write_masks.cbegin(), write_masks.cend(), write_ens.begin(),
-                       [](auto in) { return in ? vk::True : vk::False; });
-
-        cmdbuf.setColorWriteEnableEXT(write_ens);
-        cmdbuf.setColorWriteMaskEXT(0, write_masks);
+    if (instance.IsDynamicColorWriteMaskSupported()) {
+        cmdbuf.setColorWriteMaskEXT(0, pipeline.GetWriteMasks());
     }
     if (regs.depth_control.depth_bounds_enable) {
         cmdbuf.setDepthBounds(regs.depth_bounds_min, regs.depth_bounds_max);
@@ -1155,12 +1087,10 @@ void Rasterizer::UpdateViewportScissorState(const GraphicsPipeline& pipeline) {
 
     const auto& vp_ctl = regs.viewport_control;
     const float reduce_z =
-        instance.IsDepthClipControlSupported() &&
-                regs.clipper_control.clip_space == AmdGpu::Liverpool::ClipSpace::MinusWToW
-            ? 1.0f
-            : 0.0f;
+        regs.clipper_control.clip_space == AmdGpu::Liverpool::ClipSpace::MinusWToW ? 1.0f : 0.0f;
 
-    if (regs.polygon_control.enable_window_offset) {
+    if (regs.polygon_control.enable_window_offset &&
+        (regs.window_offset.window_x_offset != 0 || regs.window_offset.window_y_offset != 0)) {
         LOG_ERROR(Render_Vulkan,
                   "PA_SU_SC_MODE_CNTL.VTX_WINDOW_OFFSET_ENABLE support is not yet implemented.");
     }
@@ -1172,6 +1102,8 @@ void Rasterizer::UpdateViewportScissorState(const GraphicsPipeline& pipeline) {
             continue;
         }
 
+        const auto zoffset = vp_ctl.zoffset_enable ? vp.zoffset : 0.f;
+        const auto zscale = vp_ctl.zscale_enable ? vp.zscale : 1.f;
         if (pipeline.IsClipDisabled()) {
             // In case if clipping is disabled we patch the shader to convert vertex position
             // from screen space coordinates to NDC by defining a render space as full hardware
@@ -1181,16 +1113,14 @@ void Rasterizer::UpdateViewportScissorState(const GraphicsPipeline& pipeline) {
                 .y = 0.f,
                 .width = float(std::min<u32>(instance.GetMaxViewportWidth(), 16_KB)),
                 .height = float(std::min<u32>(instance.GetMaxViewportHeight(), 16_KB)),
-                .minDepth = 0.0,
-                .maxDepth = 1.0,
+                .minDepth = zoffset - zscale * reduce_z,
+                .maxDepth = zscale + zoffset,
             });
         } else {
             const auto xoffset = vp_ctl.xoffset_enable ? vp.xoffset : 0.f;
             const auto xscale = vp_ctl.xscale_enable ? vp.xscale : 1.f;
             const auto yoffset = vp_ctl.yoffset_enable ? vp.yoffset : 0.f;
             const auto yscale = vp_ctl.yscale_enable ? vp.yscale : 1.f;
-            const auto zoffset = vp_ctl.zoffset_enable ? vp.zoffset : 0.f;
-            const auto zscale = vp_ctl.zscale_enable ? vp.zscale : 1.f;
             viewports.push_back({
                 .x = xoffset - xscale,
                 .y = yoffset - yscale,
@@ -1242,8 +1172,8 @@ void Rasterizer::UpdateViewportScissorState(const GraphicsPipeline& pipeline) {
 }
 
 void Rasterizer::ScopeMarkerBegin(const std::string_view& str, bool from_guest) {
-    if ((from_guest && !Config::vkGuestMarkersEnabled()) ||
-        (!from_guest && !Config::vkHostMarkersEnabled())) {
+    if ((from_guest && !Config::getVkGuestMarkersEnabled()) ||
+        (!from_guest && !Config::getVkHostMarkersEnabled())) {
         return;
     }
     const auto cmdbuf = scheduler.CommandBuffer();
@@ -1253,8 +1183,8 @@ void Rasterizer::ScopeMarkerBegin(const std::string_view& str, bool from_guest) 
 }
 
 void Rasterizer::ScopeMarkerEnd(bool from_guest) {
-    if ((from_guest && !Config::vkGuestMarkersEnabled()) ||
-        (!from_guest && !Config::vkHostMarkersEnabled())) {
+    if ((from_guest && !Config::getVkGuestMarkersEnabled()) ||
+        (!from_guest && !Config::getVkHostMarkersEnabled())) {
         return;
     }
     const auto cmdbuf = scheduler.CommandBuffer();
@@ -1262,8 +1192,8 @@ void Rasterizer::ScopeMarkerEnd(bool from_guest) {
 }
 
 void Rasterizer::ScopedMarkerInsert(const std::string_view& str, bool from_guest) {
-    if ((from_guest && !Config::vkGuestMarkersEnabled()) ||
-        (!from_guest && !Config::vkHostMarkersEnabled())) {
+    if ((from_guest && !Config::getVkGuestMarkersEnabled()) ||
+        (!from_guest && !Config::getVkHostMarkersEnabled())) {
         return;
     }
     const auto cmdbuf = scheduler.CommandBuffer();
@@ -1274,8 +1204,8 @@ void Rasterizer::ScopedMarkerInsert(const std::string_view& str, bool from_guest
 
 void Rasterizer::ScopedMarkerInsertColor(const std::string_view& str, const u32 color,
                                          bool from_guest) {
-    if ((from_guest && !Config::vkGuestMarkersEnabled()) ||
-        (!from_guest && !Config::vkHostMarkersEnabled())) {
+    if ((from_guest && !Config::getVkGuestMarkersEnabled()) ||
+        (!from_guest && !Config::getVkHostMarkersEnabled())) {
         return;
     }
     const auto cmdbuf = scheduler.CommandBuffer();

@@ -32,6 +32,7 @@ std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
 
 namespace Config {
 
+static bool isHDRAllowed = false;
 static bool isNeo = false;
 static bool isFullscreen = false;
 static std::string fullscreenMode = "borderless";
@@ -47,8 +48,6 @@ static std::string logType = "async";
 static std::string userName = "shadPS4";
 static std::string updateChannel;
 static std::string chooseHomeTab;
-static u16 deadZoneLeft = 2.0;
-static u16 deadZoneRight = 2.0;
 static std::string backButtonBehavior = "left";
 static bool useSpecialPad = false;
 static int specialPadClass = 1;
@@ -57,6 +56,7 @@ static bool isDebugDump = false;
 static bool isShaderDebug = false;
 static bool isShowSplash = false;
 static bool isAutoUpdate = false;
+static bool isAlwaysShowChangelog = false;
 static bool isNullGpu = false;
 static bool shouldCopyGPUBuffers = false;
 static bool shouldDumpShaders = false;
@@ -71,6 +71,7 @@ static bool vkGuestMarkers = false;
 static bool rdocEnable = false;
 static s16 cursorState = HideCursorState::Idle;
 static int cursorHideTimeout = 5; // 5 seconds (default)
+static bool useUnifiedInputConfig = true;
 static bool separateupdatefolder = false;
 static bool compatibilityData = false;
 static bool checkCompatibilityOnStartup = false;
@@ -101,10 +102,24 @@ u32 m_window_size_H = 720;
 std::vector<std::string> m_pkg_viewer;
 std::vector<std::string> m_elf_viewer;
 std::vector<std::string> m_recent_files;
-std::string emulator_language = "en";
+std::string emulator_language = "en_US";
+static int backgroundImageOpacity = 50;
+static bool showBackgroundImage = true;
 
 // Language
 u32 m_language = 1; // english
+
+bool allowHDR() {
+    return isHDRAllowed;
+}
+
+bool GetUseUnifiedInputConfig() {
+    return useUnifiedInputConfig;
+}
+
+void SetUseUnifiedInputConfig(bool use) {
+    useUnifiedInputConfig = use;
+}
 
 std::string getTrophyKey() {
     return trophyKey;
@@ -155,14 +170,6 @@ int getBGMvolume() {
 
 bool getEnableDiscordRPC() {
     return enableDiscordRPC;
-}
-
-u16 leftDeadZone() {
-    return deadZoneLeft;
-}
-
-u16 rightDeadZone() {
-    return deadZoneRight;
 }
 
 s16 getCursorState() {
@@ -237,6 +244,10 @@ bool autoUpdate() {
     return isAutoUpdate;
 }
 
+bool alwaysShowChangelog() {
+    return isAlwaysShowChangelog;
+}
+
 bool nullGpu() {
     return isNullGpu;
 }
@@ -273,18 +284,28 @@ bool vkValidationGpuEnabled() {
     return vkValidationGpu;
 }
 
-bool vkCrashDiagnosticEnabled() {
+bool getVkCrashDiagnosticEnabled() {
     return vkCrashDiagnostic;
 }
 
-bool vkHostMarkersEnabled() {
-    // Forced on when crash diagnostic enabled.
-    return vkHostMarkers || vkCrashDiagnostic;
+bool getVkHostMarkersEnabled() {
+    return vkHostMarkers;
 }
 
-bool vkGuestMarkersEnabled() {
-    // Forced on when crash diagnostic enabled.
-    return vkGuestMarkers || vkCrashDiagnostic;
+bool getVkGuestMarkersEnabled() {
+    return vkGuestMarkers;
+}
+
+void setVkCrashDiagnosticEnabled(bool enable) {
+    vkCrashDiagnostic = enable;
+}
+
+void setVkHostMarkersEnabled(bool enable) {
+    vkHostMarkers = enable;
+}
+
+void setVkGuestMarkersEnabled(bool enable) {
+    vkGuestMarkers = enable;
 }
 
 bool getSeparateUpdateEnabled() {
@@ -350,8 +371,16 @@ void setAutoUpdate(bool enable) {
     isAutoUpdate = enable;
 }
 
+void setAlwaysShowChangelog(bool enable) {
+    isAlwaysShowChangelog = enable;
+}
+
 void setNullGpu(bool enable) {
     isNullGpu = enable;
+}
+
+void setAllowHDR(bool enable) {
+    isHDRAllowed = enable;
 }
 
 void setCopyGPUCmdBuffers(bool enable) {
@@ -631,6 +660,22 @@ u32 GetLanguage() {
     return m_language;
 }
 
+int getBackgroundImageOpacity() {
+    return backgroundImageOpacity;
+}
+
+void setBackgroundImageOpacity(int opacity) {
+    backgroundImageOpacity = std::clamp(opacity, 0, 100);
+}
+
+bool getShowBackgroundImage() {
+    return showBackgroundImage;
+}
+
+void setShowBackgroundImage(bool show) {
+    showBackgroundImage = show;
+}
+
 void load(const std::filesystem::path& path) {
     // If the configuration file does not exist, create it and return
     std::error_code error;
@@ -653,6 +698,7 @@ void load(const std::filesystem::path& path) {
     if (data.contains("General")) {
         const toml::value& general = data.at("General");
 
+        isHDRAllowed = toml::find_or<bool>(general, "allowHDR", false);
         isNeo = toml::find_or<bool>(general, "isPS4Pro", false);
         isFullscreen = toml::find_or<bool>(general, "Fullscreen", false);
         fullscreenMode = toml::find_or<std::string>(general, "FullscreenMode", "borderless");
@@ -670,6 +716,7 @@ void load(const std::filesystem::path& path) {
         }
         isShowSplash = toml::find_or<bool>(general, "showSplash", true);
         isAutoUpdate = toml::find_or<bool>(general, "autoUpdate", false);
+        isAlwaysShowChangelog = toml::find_or<bool>(general, "alwaysShowChangelog", false);
         separateupdatefolder = toml::find_or<bool>(general, "separateUpdateEnabled", false);
         compatibilityData = toml::find_or<bool>(general, "compatibilityEnabled", false);
         checkCompatibilityOnStartup =
@@ -680,14 +727,13 @@ void load(const std::filesystem::path& path) {
     if (data.contains("Input")) {
         const toml::value& input = data.at("Input");
 
-        deadZoneLeft = toml::find_or<float>(input, "deadZoneLeft", 2.0);
-        deadZoneRight = toml::find_or<float>(input, "deadZoneRight", 2.0);
         cursorState = toml::find_or<int>(input, "cursorState", HideCursorState::Idle);
         cursorHideTimeout = toml::find_or<int>(input, "cursorHideTimeout", 5);
         backButtonBehavior = toml::find_or<std::string>(input, "backButtonBehavior", "left");
         useSpecialPad = toml::find_or<bool>(input, "useSpecialPad", false);
         specialPadClass = toml::find_or<int>(input, "specialPadClass", 1);
         isMotionControlsEnabled = toml::find_or<bool>(input, "isMotionControlsEnabled", true);
+        useUnifiedInputConfig = toml::find_or<bool>(input, "useUnifiedInputConfig", true);
     }
 
     if (data.contains("GPU")) {
@@ -751,7 +797,9 @@ void load(const std::filesystem::path& path) {
         m_elf_viewer = toml::find_or<std::vector<std::string>>(gui, "elfDirs", {});
         m_recent_files = toml::find_or<std::vector<std::string>>(gui, "recentFiles", {});
         m_table_mode = toml::find_or<int>(gui, "gameTableMode", 0);
-        emulator_language = toml::find_or<std::string>(gui, "emulatorLanguage", "en");
+        emulator_language = toml::find_or<std::string>(gui, "emulatorLanguage", "en_US");
+        backgroundImageOpacity = toml::find_or<int>(gui, "backgroundImageOpacity", 50);
+        showBackgroundImage = toml::find_or<bool>(gui, "showBackgroundImage", true);
     }
 
     if (data.contains("Settings")) {
@@ -801,6 +849,7 @@ void save(const std::filesystem::path& path) {
         fmt::print("Saving new configuration file {}\n", fmt::UTF(path.u8string()));
     }
 
+    data["General"]["allowHDR"] = isHDRAllowed;
     data["General"]["isPS4Pro"] = isNeo;
     data["General"]["Fullscreen"] = isFullscreen;
     data["General"]["FullscreenMode"] = fullscreenMode;
@@ -815,17 +864,17 @@ void save(const std::filesystem::path& path) {
     data["General"]["chooseHomeTab"] = chooseHomeTab;
     data["General"]["showSplash"] = isShowSplash;
     data["General"]["autoUpdate"] = isAutoUpdate;
+    data["General"]["alwaysShowChangelog"] = isAlwaysShowChangelog;
     data["General"]["separateUpdateEnabled"] = separateupdatefolder;
     data["General"]["compatibilityEnabled"] = compatibilityData;
     data["General"]["checkCompatibilityOnStartup"] = checkCompatibilityOnStartup;
-    data["Input"]["deadZoneLeft"] = deadZoneLeft;
-    data["Input"]["deadZoneRight"] = deadZoneRight;
     data["Input"]["cursorState"] = cursorState;
     data["Input"]["cursorHideTimeout"] = cursorHideTimeout;
     data["Input"]["backButtonBehavior"] = backButtonBehavior;
     data["Input"]["useSpecialPad"] = useSpecialPad;
     data["Input"]["specialPadClass"] = specialPadClass;
     data["Input"]["isMotionControlsEnabled"] = isMotionControlsEnabled;
+    data["Input"]["useUnifiedInputConfig"] = useUnifiedInputConfig;
     data["GPU"]["screenWidth"] = screenWidth;
     data["GPU"]["screenHeight"] = screenHeight;
     data["GPU"]["nullGpu"] = isNullGpu;
@@ -857,6 +906,8 @@ void save(const std::filesystem::path& path) {
     data["GUI"]["addonInstallDir"] =
         std::string{fmt::UTF(settings_addon_install_dir.u8string()).data};
     data["GUI"]["emulatorLanguage"] = emulator_language;
+    data["GUI"]["backgroundImageOpacity"] = backgroundImageOpacity;
+    data["GUI"]["showBackgroundImage"] = showBackgroundImage;
     data["Settings"]["consoleLanguage"] = m_language;
 
 #ifdef SHADER_SKIPPING
@@ -922,6 +973,7 @@ void saveMainWindow(const std::filesystem::path& path) {
 }
 
 void setDefaultValues() {
+    isHDRAllowed = false;
     isNeo = false;
     isFullscreen = false;
     isTrophyPopupDisabled = false;
@@ -948,6 +1000,7 @@ void setDefaultValues() {
     isShaderDebug = false;
     isShowSplash = false;
     isAutoUpdate = false;
+    isAlwaysShowChangelog = false;
     isNullGpu = false;
     shouldDumpShaders = false;
     vblankDivider = 1;
@@ -958,12 +1011,122 @@ void setDefaultValues() {
     vkHostMarkers = false;
     vkGuestMarkers = false;
     rdocEnable = false;
-    emulator_language = "en";
+    emulator_language = "en_US";
     m_language = 1;
     gpuId = -1;
     separateupdatefolder = false;
     compatibilityData = false;
     checkCompatibilityOnStartup = false;
+    backgroundImageOpacity = 50;
+    showBackgroundImage = true;
+}
+
+constexpr std::string_view GetDefaultKeyboardConfig() {
+    return R"(#Feeling lost? Check out the Help section!
+
+# Keyboard bindings
+
+triangle = kp8
+circle = kp6
+cross = kp2
+square = kp4
+# Alternatives for users without a keypad
+triangle = c
+circle = b
+cross = n
+square = v
+
+l1 = q
+r1 = u
+l2 = e
+r2 = o
+l3 = x
+r3 = m
+
+options = enter
+touchpad = space
+
+pad_up = up
+pad_down = down
+pad_left = left
+pad_right = right
+
+axis_left_x_minus = a
+axis_left_x_plus = d
+axis_left_y_minus = w
+axis_left_y_plus = s
+
+axis_right_x_minus = j
+axis_right_x_plus = l
+axis_right_y_minus = i
+axis_right_y_plus = k
+
+# Controller bindings
+
+triangle = triangle
+cross = cross
+square = square
+circle = circle
+
+l1 = l1
+l2 = l2
+l3 = l3
+r1 = r1
+r2 = r2
+r3 = r3
+
+options = options
+touchpad = back
+
+pad_up = pad_up
+pad_down = pad_down
+pad_left = pad_left
+pad_right = pad_right
+
+axis_left_x = axis_left_x
+axis_left_y = axis_left_y
+axis_right_x = axis_right_x
+axis_right_y = axis_right_y
+
+# Range of deadzones: 1 (almost none) to 127 (max)
+analog_deadzone = leftjoystick, 2, 127
+analog_deadzone = rightjoystick, 2, 127
+)";
+}
+std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id) {
+    // Read configuration file of the game, and if it doesn't exist, generate it from default
+    // If that doesn't exist either, generate that from getDefaultConfig() and try again
+    // If even the folder is missing, we start with that.
+
+    const auto config_dir = Common::FS::GetUserPath(Common::FS::PathType::UserDir) / "input_config";
+    const auto config_file = config_dir / (game_id + ".ini");
+    const auto default_config_file = config_dir / "default.ini";
+
+    // Ensure the config directory exists
+    if (!std::filesystem::exists(config_dir)) {
+        std::filesystem::create_directories(config_dir);
+    }
+
+    // Check if the default config exists
+    if (!std::filesystem::exists(default_config_file)) {
+        // If the default config is also missing, create it from getDefaultConfig()
+        const auto default_config = GetDefaultKeyboardConfig();
+        std::ofstream default_config_stream(default_config_file);
+        if (default_config_stream) {
+            default_config_stream << default_config;
+        }
+    }
+
+    // if empty, we only need to execute the function up until this point
+    if (game_id.empty()) {
+        return default_config_file;
+    }
+
+    // If game-specific config doesn't exist, create it from the default config
+    if (!std::filesystem::exists(config_file)) {
+        std::filesystem::copy(default_config_file, config_file);
+    }
+    return config_file;
 }
 
 } // namespace Config

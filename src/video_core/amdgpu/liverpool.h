@@ -143,6 +143,11 @@ struct Liverpool {
             const u32 num_dwords = bininfo.length / sizeof(u32);
             return std::span{code, num_dwords};
         }
+
+        [[nodiscard]] u32 NumVgprs() const {
+            // Each increment allocates 4 registers, where 0 = 4 registers.
+            return (settings.num_vgprs + 1) * 4;
+        }
     };
 
     struct HsTessFactorClamp {
@@ -266,6 +271,10 @@ struct Liverpool {
         BitField<20, 4, ShaderExportFormat> col5;
         BitField<24, 4, ShaderExportFormat> col6;
         BitField<28, 4, ShaderExportFormat> col7;
+
+        [[nodiscard]] ShaderExportFormat GetFormat(const u32 buf_idx) const {
+            return static_cast<ShaderExportFormat>((raw >> (buf_idx * 4)) & 0xfu);
+        }
     };
 
     union VsOutputControl {
@@ -904,7 +913,7 @@ struct Liverpool {
         }
 
         bool IsTiled() const {
-            return !info.linear_general;
+            return GetTilingMode() != TilingMode::Display_Linear;
         }
 
         [[nodiscard]] DataFormat GetDataFmt() const {

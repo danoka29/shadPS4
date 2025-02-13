@@ -67,8 +67,20 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
 
     connect(reply, &QNetworkReply::finished, this, [this, reply, showMessage, updateChannel]() {
         if (reply->error() != QNetworkReply::NoError) {
-            QMessageBox::warning(this, tr("Error"),
-                                 QString(tr("Network error:") + "\n" + reply->errorString()));
+            if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 403) {
+                QString response = reply->readAll();
+                if (response.startsWith("{\"message\":\"API rate limit exceeded for")) {
+                    QMessageBox::warning(this, tr("Auto Updater"),
+                                         tr("Error_Github_limit_MSG").replace("\\n", "\n"));
+                } else {
+                    QMessageBox::warning(
+                        this, tr("Error"),
+                        QString(tr("Network error:") + "\n" + reply->errorString()));
+                }
+            } else {
+                QMessageBox::warning(this, tr("Error"),
+                                     QString(tr("Network error:") + "\n" + reply->errorString()));
+            }
             reply->deleteLater();
             return;
         }
@@ -146,14 +158,14 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
         }
 
         QString currentRev = (updateChannel == "Nightly")
-                                 ? QString::fromStdString(Common::g_scm_rev).left(7)
+                                 ? QString::fromStdString(Common::g_scm_rev)
                                  : "v." + QString::fromStdString(Common::VERSION);
         QString currentDate = Common::g_scm_date;
 
         QDateTime dateTime = QDateTime::fromString(latestDate, Qt::ISODate);
         latestDate = dateTime.isValid() ? dateTime.toString("yyyy-MM-dd HH:mm:ss") : "Unknown date";
 
-        if (latestRev == currentRev) {
+        if (latestRev == currentRev.left(7)) {
             if (showMessage) {
                 QMessageBox::information(this, tr("Auto Updater"),
                                          tr("Your version is already up to date!"));
@@ -186,29 +198,45 @@ void CheckUpdate::setupUI(const QString& downloadUrl, const QString& latestDate,
 
     QString updateChannel = QString::fromStdString(Config::getUpdateChannel());
 
-    QString updateText =
-        QString("<p><b><br>" + tr("Update Channel") + ": </b>" + updateChannel + "<br><b>" +
-                tr("Current Version") + ":</b> %1 (%2)<br><b>" + tr("Latest Version") +
-                ":</b> %3 (%4)</p><p>" + tr("Do you want to update?") + "</p>")
-            .arg(currentRev, currentDate, latestRev, latestDate);
+    QString updateText = QString("<p><b>" + tr("Update Channel") + ": </b>" + updateChannel +
+                                 "<br>"
+                                 "<table><tr>"
+                                 "<td><b>" +
+                                 tr("Current Version") +
+                                 ":</b></td>"
+                                 "<td>%1</td>"
+                                 "<td>(%2)</td>"
+                                 "</tr><tr>"
+                                 "<td><b>" +
+                                 tr("Latest Version") +
+                                 ":</b></td>"
+                                 "<td>%3</td>"
+                                 "<td>(%4)</td>"
+                                 "</tr></table></p>")
+                             .arg(currentRev.left(7), currentDate, latestRev, latestDate);
+
     QLabel* updateLabel = new QLabel(updateText, this);
     layout->addWidget(updateLabel);
 
     // Setup bottom layout with action buttons
-    QHBoxLayout* bottomLayout = new QHBoxLayout();
     autoUpdateCheckBox = new QCheckBox(tr("Check for Updates at Startup"), this);
+    layout->addWidget(autoUpdateCheckBox);
+
+    QHBoxLayout* updatePromptLayout = new QHBoxLayout();
+    QLabel* updatePromptLabel = new QLabel(tr("Do you want to update?"), this);
+    updatePromptLayout->addWidget(updatePromptLabel);
+
     yesButton = new QPushButton(tr("Update"), this);
     noButton = new QPushButton(tr("No"), this);
     yesButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     noButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    bottomLayout->addWidget(autoUpdateCheckBox);
 
     QSpacerItem* spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    bottomLayout->addItem(spacer);
+    updatePromptLayout->addItem(spacer);
+    updatePromptLayout->addWidget(yesButton);
+    updatePromptLayout->addWidget(noButton);
 
-    bottomLayout->addWidget(yesButton);
-    bottomLayout->addWidget(noButton);
-    layout->addLayout(bottomLayout);
+    layout->addLayout(updatePromptLayout);
 
     // Don't show changelog button if:
     // The current version is a pre-release and the version to be downloaded is a release.
@@ -229,19 +257,27 @@ void CheckUpdate::setupUI(const QString& downloadUrl, const QString& latestDate,
         connect(toggleButton, &QPushButton::clicked,
                 [this, textField, toggleButton, currentRev, latestRev, downloadUrl, latestDate,
                  currentDate]() {
-                    QString updateChannel = QString::fromStdString(Config::getUpdateChannel());
                     if (!textField->isVisible()) {
                         requestChangelog(currentRev, latestRev, downloadUrl, latestDate,
                                          currentDate);
                         textField->setVisible(true);
                         toggleButton->setText(tr("Hide Changelog"));
                         adjustSize();
+                        textField->setFixedWidth(textField->width() + 20);
                     } else {
                         textField->setVisible(false);
                         toggleButton->setText(tr("Show Changelog"));
                         adjustSize();
                     }
                 });
+
+        if (Config::alwaysShowChangelog()) {
+            requestChangelog(currentRev, latestRev, downloadUrl, latestDate, currentDate);
+            textField->setVisible(true);
+            toggleButton->setText(tr("Hide Changelog"));
+            adjustSize();
+            textField->setFixedWidth(textField->width() + 20);
+        }
     }
 
     connect(yesButton, &QPushButton::clicked, this, [this, downloadUrl]() {

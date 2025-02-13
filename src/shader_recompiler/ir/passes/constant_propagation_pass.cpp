@@ -340,14 +340,66 @@ void ConstantPropagation(IR::Block& block, IR::Inst& inst) {
         return FoldBitCast<IR::Opcode::BitCastF32U32, f32, u32>(inst, IR::Opcode::BitCastU32F32);
     case IR::Opcode::BitCastU32F32:
         return FoldBitCast<IR::Opcode::BitCastU32F32, u32, f32>(inst, IR::Opcode::BitCastF32U32);
+    // 2x16
+    case IR::Opcode::PackUnorm2x16:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUnorm2x16);
+    case IR::Opcode::UnpackUnorm2x16:
+        return FoldInverseFunc(inst, IR::Opcode::PackUnorm2x16);
+    case IR::Opcode::PackSnorm2x16:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackSnorm2x16);
+    case IR::Opcode::UnpackSnorm2x16:
+        return FoldInverseFunc(inst, IR::Opcode::PackSnorm2x16);
+    case IR::Opcode::PackUint2x16:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUint2x16);
+    case IR::Opcode::UnpackUint2x16:
+        return FoldInverseFunc(inst, IR::Opcode::PackUint2x16);
+    case IR::Opcode::PackSint2x16:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackSint2x16);
+    case IR::Opcode::UnpackSint2x16:
+        return FoldInverseFunc(inst, IR::Opcode::PackSint2x16);
     case IR::Opcode::PackHalf2x16:
         return FoldInverseFunc(inst, IR::Opcode::UnpackHalf2x16);
     case IR::Opcode::UnpackHalf2x16:
         return FoldInverseFunc(inst, IR::Opcode::PackHalf2x16);
-    case IR::Opcode::PackFloat2x16:
-        return FoldInverseFunc(inst, IR::Opcode::UnpackFloat2x16);
-    case IR::Opcode::UnpackFloat2x16:
-        return FoldInverseFunc(inst, IR::Opcode::PackFloat2x16);
+    // 4x8
+    case IR::Opcode::PackUnorm4x8:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUnorm4x8);
+    case IR::Opcode::UnpackUnorm4x8:
+        return FoldInverseFunc(inst, IR::Opcode::PackUnorm4x8);
+    case IR::Opcode::PackSnorm4x8:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackSnorm4x8);
+    case IR::Opcode::UnpackSnorm4x8:
+        return FoldInverseFunc(inst, IR::Opcode::PackSnorm4x8);
+    case IR::Opcode::PackUint4x8:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUint4x8);
+    case IR::Opcode::UnpackUint4x8:
+        return FoldInverseFunc(inst, IR::Opcode::PackUint4x8);
+    case IR::Opcode::PackSint4x8:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackSint4x8);
+    case IR::Opcode::UnpackSint4x8:
+        return FoldInverseFunc(inst, IR::Opcode::PackSint4x8);
+    // 10_11_11
+    case IR::Opcode::PackUfloat10_11_11:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUfloat10_11_11);
+    case IR::Opcode::UnpackUfloat10_11_11:
+        return FoldInverseFunc(inst, IR::Opcode::PackUfloat10_11_11);
+    // 2_10_10_10
+    case IR::Opcode::PackUnorm2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUnorm2_10_10_10);
+    case IR::Opcode::UnpackUnorm2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::PackUnorm2_10_10_10);
+    case IR::Opcode::PackSnorm2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackSnorm2_10_10_10);
+    case IR::Opcode::UnpackSnorm2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::PackSnorm2_10_10_10);
+    case IR::Opcode::PackUint2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackUint2_10_10_10);
+    case IR::Opcode::UnpackUint2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::PackUint2_10_10_10);
+    case IR::Opcode::PackSint2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::UnpackSint2_10_10_10);
+    case IR::Opcode::UnpackSint2_10_10_10:
+        return FoldInverseFunc(inst, IR::Opcode::PackSint2_10_10_10);
     case IR::Opcode::SelectU1:
     case IR::Opcode::SelectU8:
     case IR::Opcode::SelectU16:
@@ -403,8 +455,11 @@ void ConstantPropagation(IR::Block& block, IR::Inst& inst) {
     case IR::Opcode::IEqual64:
         FoldWhenAllImmediates(inst, [](u64 a, u64 b) { return a == b; });
         return;
-    case IR::Opcode::INotEqual:
+    case IR::Opcode::INotEqual32:
         FoldWhenAllImmediates(inst, [](u32 a, u32 b) { return a != b; });
+        return;
+    case IR::Opcode::INotEqual64:
+        FoldWhenAllImmediates(inst, [](u64 a, u64 b) { return a != b; });
         return;
     case IR::Opcode::BitwiseAnd32:
         FoldWhenAllImmediates(inst, [](u32 a, u32 b) { return a & b; });

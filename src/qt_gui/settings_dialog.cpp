@@ -72,7 +72,7 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices,
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Close)->setFocus();
 
     // Add list of available GPUs
-    ui->graphicsAdapterBox->addItem("Auto Select"); // -1, auto selection
+    ui->graphicsAdapterBox->addItem(tr("Auto Select")); // -1, auto selection
     for (const auto& device : physical_devices) {
         ui->graphicsAdapterBox->addItem(device);
     }
@@ -137,9 +137,15 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
         connect(ui->updateCheckBox, &QCheckBox::stateChanged, this,
                 [](int state) { Config::setAutoUpdate(state == Qt::Checked); });
+
+        connect(ui->changelogCheckBox, &QCheckBox::stateChanged, this,
+                [](int state) { Config::setAlwaysShowChangelog(state == Qt::Checked); });
 #else
         connect(ui->updateCheckBox, &QCheckBox::checkStateChanged, this,
                 [](Qt::CheckState state) { Config::setAutoUpdate(state == Qt::Checked); });
+
+        connect(ui->changelogCheckBox, &QCheckBox::checkStateChanged, this,
+                [](Qt::CheckState state) { Config::setAlwaysShowChangelog(state == Qt::Checked); });
 #endif
 
         connect(ui->updateComboBox, &QComboBox::currentTextChanged, this,
@@ -159,20 +165,33 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices,
                 });
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
-        connect(ui->enableCompatibilityCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
+        connect(ui->enableCompatibilityCheckBox, &QCheckBox::stateChanged, this,
+                [this, m_compat_info](int state) {
 #else
         connect(ui->enableCompatibilityCheckBox, &QCheckBox::checkStateChanged, this,
-                [this](Qt::CheckState state) {
+                [this, m_compat_info](Qt::CheckState state) {
 #endif
-            Config::setCompatibilityEnabled(state);
-            emit CompatibilityChanged();
-        });
+                    Config::setCompatibilityEnabled(state);
+                    if (state) {
+                        m_compat_info->LoadCompatibilityFile();
+                    }
+                    emit CompatibilityChanged();
+                });
     }
 
     // Gui TAB
     {
         connect(ui->chooseHomeTabComboBox, &QComboBox::currentTextChanged, this,
                 [](const QString& hometab) { Config::setChooseHomeTab(hometab.toStdString()); });
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
+        connect(ui->showBackgroundImageCheckBox, &QCheckBox::stateChanged, this, [](int state) {
+#else
+        connect(ui->showBackgroundImageCheckBox, &QCheckBox::checkStateChanged, this,
+                [](Qt::CheckState state) {
+#endif
+            Config::setShowBackgroundImage(state == Qt::Checked);
+        });
     }
     // Input TAB
     {
@@ -251,6 +270,7 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices,
 #ifdef ENABLE_UPDATER
         ui->updaterGroupBox->installEventFilter(this);
 #endif
+        ui->GUIBackgroundImageGroupBox->installEventFilter(this);
         ui->GUIMusicGroupBox->installEventFilter(this);
         ui->disableTrophycheckBox->installEventFilter(this);
         ui->enableCompatibilityCheckBox->installEventFilter(this);
@@ -269,6 +289,7 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices,
         ui->heightDivider->installEventFilter(this);
         ui->dumpShadersCheckBox->installEventFilter(this);
         ui->nullGpuCheckBox->installEventFilter(this);
+        ui->enableHDRCheckBox->installEventFilter(this);
 
         // Paths
         ui->gameFoldersGroupBox->installEventFilter(this);
@@ -285,6 +306,11 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices,
         ui->vkValidationCheckBox->installEventFilter(this);
         ui->vkSyncValidationCheckBox->installEventFilter(this);
         ui->rdocCheckBox->installEventFilter(this);
+        ui->crashDiagnosticsCheckBox->installEventFilter(this);
+        ui->guestMarkersCheckBox->installEventFilter(this);
+        ui->hostMarkersCheckBox->installEventFilter(this);
+        ui->collectShaderCheckBox->installEventFilter(this);
+        ui->copyGPUBuffersCheckBox->installEventFilter(this);
     }
 }
 
@@ -321,7 +347,7 @@ void SettingsDialog::LoadValuesFromConfig() {
                                 toml::find_or<int>(data, "Settings", "consoleLanguage", 6))) %
         languageIndexes.size());
     ui->emulatorLanguageComboBox->setCurrentIndex(
-        languages[toml::find_or<std::string>(data, "GUI", "emulatorLanguage", "en")]);
+        languages[toml::find_or<std::string>(data, "GUI", "emulatorLanguage", "en_US")]);
     ui->hideCursorComboBox->setCurrentIndex(toml::find_or<int>(data, "Input", "cursorState", 1));
     OnCursorStateChanged(toml::find_or<int>(data, "Input", "cursorState", 1));
     ui->idleTimeoutSpinBox->setValue(toml::find_or<int>(data, "Input", "cursorHideTimeout", 5));
@@ -333,6 +359,7 @@ void SettingsDialog::LoadValuesFromConfig() {
     ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankDivider", 1));
     ui->dumpShadersCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "dumpShaders", false));
     ui->nullGpuCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "nullGpu", false));
+    ui->enableHDRCheckBox->setChecked(toml::find_or<bool>(data, "General", "allowHDR", false));
     ui->playBGMCheckBox->setChecked(toml::find_or<bool>(data, "General", "playBGM", false));
     ui->disableTrophycheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
@@ -360,6 +387,15 @@ void SettingsDialog::LoadValuesFromConfig() {
     ui->vkSyncValidationCheckBox->setChecked(
         toml::find_or<bool>(data, "Vulkan", "validation_sync", false));
     ui->rdocCheckBox->setChecked(toml::find_or<bool>(data, "Vulkan", "rdocEnable", false));
+    ui->crashDiagnosticsCheckBox->setChecked(
+        toml::find_or<bool>(data, "Vulkan", "crashDiagnostic", false));
+    ui->guestMarkersCheckBox->setChecked(
+        toml::find_or<bool>(data, "Vulkan", "guestMarkers", false));
+    ui->hostMarkersCheckBox->setChecked(toml::find_or<bool>(data, "Vulkan", "hostMarkers", false));
+    ui->copyGPUBuffersCheckBox->setChecked(
+        toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
+    ui->collectShaderCheckBox->setChecked(
+        toml::find_or<bool>(data, "Debug", "CollectShader", false));
     ui->enableCompatibilityCheckBox->setChecked(
         toml::find_or<bool>(data, "General", "compatibilityEnabled", false));
     ui->checkCompatibilityOnStartupCheckBox->setChecked(
@@ -367,6 +403,8 @@ void SettingsDialog::LoadValuesFromConfig() {
 
 #ifdef ENABLE_UPDATER
     ui->updateCheckBox->setChecked(toml::find_or<bool>(data, "General", "autoUpdate", false));
+    ui->changelogCheckBox->setChecked(
+        toml::find_or<bool>(data, "General", "alwaysShowChangelog", false));
     std::string updateChannel = toml::find_or<std::string>(data, "General", "updateChannel", "");
     if (updateChannel != "Release" && updateChannel != "Nightly") {
         if (Common::isRelease) {
@@ -380,7 +418,7 @@ void SettingsDialog::LoadValuesFromConfig() {
 
     std::string chooseHomeTab = toml::find_or<std::string>(data, "General", "chooseHomeTab", "");
     ui->chooseHomeTabComboBox->setCurrentText(QString::fromStdString(chooseHomeTab));
-    QStringList tabNames = {tr("General"), tr("Gui"),   tr("Graphics"), tr("User"),
+    QStringList tabNames = {tr("General"), tr("GUI"),   tr("Graphics"), tr("User"),
                             tr("Input"),   tr("Paths"), tr("Debug")};
     QString chooseHomeTabQString = QString::fromStdString(chooseHomeTab);
     int indexTab = tabNames.indexOf(chooseHomeTabQString);
@@ -396,6 +434,8 @@ void SettingsDialog::LoadValuesFromConfig() {
 
     ui->removeFolderButton->setEnabled(!ui->gameFoldersListWidget->selectedItems().isEmpty());
     ResetInstallFolders();
+    ui->backgroundImageOpacitySlider->setValue(Config::getBackgroundImageOpacity());
+    ui->showBackgroundImageCheckBox->setChecked(Config::getShowBackgroundImage());
 }
 
 void SettingsDialog::InitializeEmulatorLanguages() {
@@ -490,8 +530,12 @@ void SettingsDialog::updateNoteTextEdit(const QString& elementName) {
     } else if (elementName == "updaterGroupBox") {
         text = tr("updaterGroupBox");
 #endif
+    } else if (elementName == "GUIBackgroundImageGroupBox") {
+        text = tr("GUIBackgroundImageGroupBox");
     } else if (elementName == "GUIMusicGroupBox") {
         text = tr("GUIMusicGroupBox");
+    } else if (elementName == "enableHDRCheckBox") {
+        text = tr("enableHDRCheckBox");
     } else if (elementName == "disableTrophycheckBox") {
         text = tr("disableTrophycheckBox");
     } else if (elementName == "enableCompatibilityCheckBox") {
@@ -551,6 +595,16 @@ void SettingsDialog::updateNoteTextEdit(const QString& elementName) {
         text = tr("vkSyncValidationCheckBox");
     } else if (elementName == "rdocCheckBox") {
         text = tr("rdocCheckBox");
+    } else if (elementName == "crashDiagnosticsCheckBox") {
+        text = tr("crashDiagnosticsCheckBox");
+    } else if (elementName == "guestMarkersCheckBox") {
+        text = tr("guestMarkersCheckBox");
+    } else if (elementName == "hostMarkersCheckBox") {
+        text = tr("hostMarkersCheckBox");
+    } else if (elementName == "copyGPUBuffersCheckBox") {
+        text = tr("copyGPUBuffersCheckBox");
+    } else if (elementName == "collectShaderCheckBox") {
+        text = tr("collectShaderCheckBox");
     }
 
     ui->descriptionText->setText(text.replace("\\n", "\n"));
@@ -582,6 +636,7 @@ void SettingsDialog::UpdateSettings() {
     Config::setIsMotionControlsEnabled(ui->motionControlsCheckBox->isChecked());
     Config::setisTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked());
     Config::setPlayBGM(ui->playBGMCheckBox->isChecked());
+    Config::setAllowHDR(ui->enableHDRCheckBox->isChecked());
     Config::setLogType(ui->logTypeComboBox->currentText().toStdString());
     Config::setLogFilter(ui->logFilterLineEdit->text().toStdString());
     Config::setUserName(ui->userNameLineEdit->text().toStdString());
@@ -604,11 +659,20 @@ void SettingsDialog::UpdateSettings() {
     Config::setVkValidation(ui->vkValidationCheckBox->isChecked());
     Config::setVkSyncValidation(ui->vkSyncValidationCheckBox->isChecked());
     Config::setRdocEnabled(ui->rdocCheckBox->isChecked());
+    Config::setVkHostMarkersEnabled(ui->hostMarkersCheckBox->isChecked());
+    Config::setVkGuestMarkersEnabled(ui->guestMarkersCheckBox->isChecked());
+    Config::setVkCrashDiagnosticEnabled(ui->crashDiagnosticsCheckBox->isChecked());
+    Config::setCollectShaderForDebug(ui->collectShaderCheckBox->isChecked());
+    Config::setCopyGPUCmdBuffers(ui->copyGPUBuffersCheckBox->isChecked());
     Config::setAutoUpdate(ui->updateCheckBox->isChecked());
+    Config::setAlwaysShowChangelog(ui->changelogCheckBox->isChecked());
     Config::setUpdateChannel(ui->updateComboBox->currentText().toStdString());
     Config::setChooseHomeTab(ui->chooseHomeTabComboBox->currentText().toStdString());
     Config::setCompatibilityEnabled(ui->enableCompatibilityCheckBox->isChecked());
     Config::setCheckCompatibilityOnStartup(ui->checkCompatibilityOnStartupCheckBox->isChecked());
+    Config::setBackgroundImageOpacity(ui->backgroundImageOpacitySlider->value());
+    emit BackgroundOpacityChanged(ui->backgroundImageOpacitySlider->value());
+    Config::setShowBackgroundImage(ui->showBackgroundImageCheckBox->isChecked());
 
 #ifdef ENABLE_DISCORD_RPC
     auto* rpc = Common::Singleton<DiscordRPCHandler::RPC>::Instance();

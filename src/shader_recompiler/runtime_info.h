@@ -174,6 +174,10 @@ struct FragmentRuntimeInfo {
         bool is_flat;
         u8 default_value;
 
+        [[nodiscard]] bool IsDefault() const {
+            return is_default && !is_flat;
+        }
+
         auto operator<=>(const PsInput&) const noexcept = default;
     };
     AmdGpu::Liverpool::PsInput en_flags;
@@ -184,6 +188,8 @@ struct FragmentRuntimeInfo {
         AmdGpu::NumberFormat num_format;
         AmdGpu::NumberConversion num_conversion;
         AmdGpu::CompMapping swizzle;
+        AmdGpu::Liverpool::ShaderExportFormat export_format;
+        bool needs_unorm_fixup;
 
         auto operator<=>(const PsColorBuffer&) const noexcept = default;
     };
@@ -200,7 +206,6 @@ struct FragmentRuntimeInfo {
 
 struct ComputeRuntimeInfo {
     u32 shared_memory_size;
-    u32 max_shared_memory_size;
     std::array<u32, 3> workgroup_size;
     std::array<bool, 3> tgid_enable;
 

@@ -11,6 +11,7 @@
 #include "core/libraries/disc_map/disc_map.h"
 #include "core/libraries/game_live_streaming/gamelivestreaming.h"
 #include "core/libraries/gnmdriver/gnmdriver.h"
+#include "core/libraries/hmd/hmd.h"
 #include "core/libraries/ime/error_dialog.h"
 #include "core/libraries/ime/ime.h"
 #include "core/libraries/ime/ime_dialog.h"
@@ -28,6 +29,7 @@
 #include "core/libraries/network/ssl2.h"
 #include "core/libraries/np_common/np_common.h"
 #include "core/libraries/np_manager/np_manager.h"
+#include "core/libraries/np_party/np_party.h"
 #include "core/libraries/np_score/np_score.h"
 #include "core/libraries/np_trophy/np_trophy.h"
 #include "core/libraries/np_web_api/np_web_api.h"
@@ -52,6 +54,8 @@
 #include "core/libraries/videodec/videodec.h"
 #include "core/libraries/videodec/videodec2.h"
 #include "core/libraries/videoout/video_out.h"
+#include "core/libraries/web_browser_dialog/webbrowserdialog.h"
+#include "core/libraries/zlib/zlib_sce.h"
 #include "fiber/fiber.h"
 #include "jpeg/jpegenc.h"
 
@@ -107,6 +111,10 @@ void InitHLELibs(Core::Loader::SymbolsResolver* sym) {
     Libraries::Fiber::RegisterlibSceFiber(sym);
     Libraries::JpegEnc::RegisterlibSceJpegEnc(sym);
     Libraries::Mouse::RegisterlibSceMouse(sym);
+    Libraries::WebBrowserDialog::RegisterlibSceWebBrowserDialog(sym);
+    Libraries::NpParty::RegisterlibSceNpParty(sym);
+    Libraries::Zlib::RegisterlibSceZlib(sym);
+    Libraries::Hmd::RegisterlibSceHmd(sym);
 }
 
 } // namespace Libraries
