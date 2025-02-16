@@ -69,9 +69,12 @@ static bool vkCrashDiagnostic = false;
 static bool vkHostMarkers = false;
 static bool vkGuestMarkers = false;
 static bool rdocEnable = false;
+static bool isFpsColor = true;
 static s16 cursorState = HideCursorState::Idle;
 static int cursorHideTimeout = 5; // 5 seconds (default)
 static bool useUnifiedInputConfig = true;
+static bool overrideControllerColor = false;
+static int controllerCustomColorRGB[3] = {0, 0, 255};
 static bool separateupdatefolder = false;
 static bool compatibilityData = false;
 static bool checkCompatibilityOnStartup = false;
@@ -119,6 +122,24 @@ bool GetUseUnifiedInputConfig() {
 
 void SetUseUnifiedInputConfig(bool use) {
     useUnifiedInputConfig = use;
+}
+
+bool GetOverrideControllerColor() {
+    return overrideControllerColor;
+}
+
+void SetOverrideControllerColor(bool enable) {
+    overrideControllerColor = enable;
+}
+
+int* GetControllerCustomColor() {
+    return controllerCustomColorRGB;
+}
+
+void SetControllerCustomColor(int r, int b, int g) {
+    controllerCustomColorRGB[0] = r;
+    controllerCustomColorRGB[1] = b;
+    controllerCustomColorRGB[2] = g;
 }
 
 std::string getTrophyKey() {
@@ -266,6 +287,10 @@ bool patchShaders() {
 
 bool isRdocEnabled() {
     return rdocEnable;
+}
+
+bool fpsColor() {
+    return isFpsColor;
 }
 
 u32 vblankDiv() {
@@ -766,6 +791,7 @@ void load(const std::filesystem::path& path) {
 
         isDebugDump = toml::find_or<bool>(debug, "DebugDump", false);
         isShaderDebug = toml::find_or<bool>(debug, "CollectShader", false);
+        isFpsColor = toml::find_or<bool>(debug, "FPSColor", true);
     }
 
     if (data.contains("GUI")) {
@@ -826,6 +852,18 @@ void load(const std::filesystem::path& path) {
         }
     }
 #endif
+
+    // Check if the loaded language is in the allowed list
+    const std::vector<std::string> allowed_languages = {
+        "ar_SA", "da_DK", "de_DE", "el_GR", "en_US", "es_ES", "fa_IR", "fi_FI", "fr_FR", "hu_HU",
+        "id_ID", "it_IT", "ja_JP", "ko_KR", "lt_LT", "nb_NO", "nl_NL", "pl_PL", "pt_BR", "pt_PT",
+        "ro_RO", "ru_RU", "sq_AL", "sv_SE", "tr_TR", "uk_UA", "vi_VN", "zh_CN", "zh_TW"};
+
+    if (std::find(allowed_languages.begin(), allowed_languages.end(), emulator_language) ==
+        allowed_languages.end()) {
+        emulator_language = "en_US"; // Default to en_US if not in the list
+        save(path);
+    }
 }
 
 void save(const std::filesystem::path& path) {
@@ -892,6 +930,7 @@ void save(const std::filesystem::path& path) {
     data["Vulkan"]["rdocEnable"] = rdocEnable;
     data["Debug"]["DebugDump"] = isDebugDump;
     data["Debug"]["CollectShader"] = isShaderDebug;
+    data["Debug"]["FPSColor"] = isFpsColor;
 
     data["Keys"]["TrophyKey"] = trophyKey;
 
@@ -1091,6 +1130,8 @@ axis_right_y = axis_right_y
 # Range of deadzones: 1 (almost none) to 127 (max)
 analog_deadzone = leftjoystick, 2, 127
 analog_deadzone = rightjoystick, 2, 127
+
+override_controller_color = false, 0, 0, 255
 )";
 }
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id) {
