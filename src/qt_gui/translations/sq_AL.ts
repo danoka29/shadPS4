@@ -10,10 +10,6 @@
       <translation>Rreth shadPS4</translation>
     </message>
     <message>
-      <source>shadPS4</source>
-      <translation>shadPS4</translation>
-    </message>
-    <message>
       <source>shadPS4 is an experimental open-source emulator for the PlayStation 4.</source>
       <translation>shadPS4 është një emulator eksperimental me burim të hapur për PlayStation 4.</translation>
     </message>
@@ -78,7 +74,7 @@
     </message>
     <message>
       <source>Select Patch File:</source>
-      <translation>Përzgjidh Skedarin e Arnës:</translation>
+      <translation>Përzgjidh skedarin e arnës:</translation>
     </message>
     <message>
       <source>Download Patches</source>
@@ -142,7 +138,7 @@
     </message>
     <message>
       <source>File Exists</source>
-      <translation>Skedari Ekziston</translation>
+      <translation>Skedari ekziston</translation>
     </message>
     <message>
       <source>File already exists. Do you want to replace it?</source>
@@ -325,7 +321,7 @@
     </message>
     <message>
       <source>Hide Changelog</source>
-      <translation>Fshih ndryshimet</translation>
+      <translation>Fshih Ndryshimet</translation>
     </message>
     <message>
       <source>Changes</source>
@@ -414,12 +410,8 @@
       <translation>Konfiguro kontrollet</translation>
     </message>
     <message>
-      <source>Control Settings</source>
-      <translation>Cilësimet e kontrollit</translation>
-    </message>
-    <message>
       <source>D-Pad</source>
-      <translation>D-Pad</translation>
+      <translation>Shigjetat</translation>
     </message>
     <message>
       <source>Up</source>
@@ -459,7 +451,7 @@
     </message>
     <message>
       <source>Use per-game configs</source>
-      <translation>Përdor konfigurime për secilën lojë</translation>
+      <translation>Përdor konfigurime të veçanta për secilën lojë</translation>
     </message>
     <message>
       <source>L1 / LB</source>
@@ -468,14 +460,6 @@
     <message>
       <source>L2 / LT</source>
       <translation>L2 / LT</translation>
-    </message>
-    <message>
-      <source>KBM Controls</source>
-      <translation>Kontrollet Tastierë/Mi</translation>
-    </message>
-    <message>
-      <source>KBM Editor</source>
-      <translation>Redaktues Tastierë/Mi</translation>
     </message>
     <message>
       <source>Back</source>
@@ -532,6 +516,101 @@
     <message>
       <source>Right Stick</source>
       <translation>Leva e djathtë</translation>
+    </message>
+    <message>
+      <source>Color Adjustment</source>
+      <translation>Rregullimi i Ngjyrave</translation>
+    </message>
+    <message>
+      <source>R:</source>
+      <translation>R:</translation>
+    </message>
+    <message>
+      <source>G:</source>
+      <translation>G:</translation>
+    </message>
+    <message>
+      <source>B:</source>
+      <translation>B:</translation>
+    </message>
+    <message>
+      <source>Override Lightbar Color</source>
+      <translation>Zëvendëso Ngjyrën e Shiritit të ndriçimit</translation>
+    </message>
+    <message>
+      <source>Override Color</source>
+      <translation>Zëvendëso Ngjyrën</translation>
+    </message>
+    <message>
+      <source>Unable to Save</source>
+      <translation>Ruajtja Dështoi</translation>
+    </message>
+    <message>
+      <source>Cannot bind axis values more than once</source>
+      <translation>Nuk mund të caktohen vlerat e boshtit më shumë se një herë</translation>
+    </message>
+    <message>
+      <source>Save</source>
+      <translation>Ruaj</translation>
+    </message>
+    <message>
+      <source>Apply</source>
+      <translation>Zbato</translation>
+    </message>
+    <message>
+      <source>Restore Defaults</source>
+      <translation>Rikthe Paracaktimet</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <translation>Anulo</translation>
+    </message>
+  </context>
+  <context>
+    <name>EditorDialog</name>
+    <message>
+      <source>Edit Keyboard + Mouse and Controller input bindings</source>
+      <translation>Redakto caktimet e hyrjeve për Tastierën + Miun dhe Dorezën</translation>
+    </message>
+    <message>
+      <source>Use Per-Game configs</source>
+      <translation>Përdor konfigurime për secilën lojë</translation>
+    </message>
+    <message>
+      <source>Error</source>
+      <translation>Gabim</translation>
+    </message>
+    <message>
+      <source>Could not open the file for reading</source>
+      <translation>Skedari nuk mund të hapet për lexim</translation>
+    </message>
+    <message>
+      <source>Could not open the file for writing</source>
+      <translation>Skedari nuk mund të hapet për shkrim</translation>
+    </message>
+    <message>
+      <source>Save Changes</source>
+      <translation>Ruaj Ndryshimet</translation>
+    </message>
+    <message>
+      <source>Do you want to save changes?</source>
+      <translation>Do të ruash ndryshimet?</translation>
+    </message>
+    <message>
+      <source>Help</source>
+      <translation>Ndihmë</translation>
+    </message>
+    <message>
+      <source>Do you want to reset your custom default config to the original default config?</source>
+      <translation>A do ta rivendosësh konfigurimin tënd të paracaktuar të personalizuar te konfigurimi i paracaktuar origjinal?</translation>
+    </message>
+    <message>
+      <source>Do you want to reset this config to your custom default config?</source>
+      <translation>A do ta rivendosësh këtë konfigurim në konfigurimin tënd të paracaktuar të personalizuar?</translation>
+    </message>
+    <message>
+      <source>Reset to Default</source>
+      <translation>Rivendos në të Paracaktuarit</translation>
     </message>
   </context>
   <context>
@@ -757,15 +836,19 @@
     </message>
     <message>
       <source>Delete Game</source>
-      <translation>Fshi lojën</translation>
+      <translation>Fshi Lojën</translation>
     </message>
     <message>
       <source>Delete Update</source>
-      <translation>Fshi përditësimin</translation>
+      <translation>Fshi Përditësimin</translation>
     </message>
     <message>
       <source>Delete DLC</source>
       <translation>Fshi DLC-në</translation>
+    </message>
+    <message>
+      <source>Delete Trophy</source>
+      <translation>Fshi Trofeun</translation>
     </message>
     <message>
       <source>Compatibility...</source>
@@ -837,11 +920,15 @@
     </message>
     <message>
       <source>Delete Save Data</source>
-      <translation>Fshi të dhënat e ruajtjes</translation>
+      <translation>Fshi të Dhënat e Ruajtjes</translation>
     </message>
     <message>
       <source>This game has no update folder to open!</source>
       <translation>Kjo lojë nuk ka dosje përditësimi për të hapur!</translation>
+    </message>
+    <message>
+      <source>No log file found for this game!</source>
+      <translation>Nuk u gjet asnjë skedar ditari për këtë lojë!</translation>
     </message>
     <message>
       <source>Failed to convert icon.</source>
@@ -852,8 +939,43 @@
       <translation>Kjo lojë nuk ka të dhëna ruajtje për të fshirë!</translation>
     </message>
     <message>
+      <source>This game has no saved trophies to delete!</source>
+      <translation>Kjo lojë nuk ka trofe të ruajtur për të fshirë!</translation>
+    </message>
+    <message>
       <source>Save Data</source>
       <translation>Të dhënat e ruajtjes</translation>
+    </message>
+    <message>
+      <source>Trophy</source>
+      <translation>Trofeu</translation>
+    </message>
+    <message>
+      <source>SFO Viewer for </source>
+      <translation>Shikuesi SFO për </translation>
+    </message>
+  </context>
+  <context>
+    <name>HelpDialog</name>
+    <message>
+      <source>Quickstart</source>
+      <translation>Nisje e shpejtë</translation>
+    </message>
+    <message>
+      <source>FAQ</source>
+      <translation>Pyetje të Shpeshta</translation>
+    </message>
+    <message>
+      <source>Syntax</source>
+      <translation>Sintaksa</translation>
+    </message>
+    <message>
+      <source>Special Bindings</source>
+      <translation>Caktimet e Veçantë</translation>
+    </message>
+    <message>
+      <source>Keybindings</source>
+      <translation>Caktimet e Tasteve</translation>
     </message>
   </context>
   <context>
@@ -873,6 +995,217 @@
     <message>
       <source>Delete PKG File on Install</source>
       <translation>Fshi skedarin PKG pas instalimit</translation>
+    </message>
+  </context>
+  <context>
+    <name>KBMSettings</name>
+    <message>
+      <source>Configure Controls</source>
+      <translation>Konfiguro Kontrollet</translation>
+    </message>
+    <message>
+      <source>D-Pad</source>
+      <translation>Shigjetat</translation>
+    </message>
+    <message>
+      <source>Up</source>
+      <translation>Lartë</translation>
+    </message>
+    <message>
+      <source>unmapped</source>
+      <translation>pacaktuar</translation>
+    </message>
+    <message>
+      <source>Left</source>
+      <translation>Majtas</translation>
+    </message>
+    <message>
+      <source>Right</source>
+      <translation>Djathtas</translation>
+    </message>
+    <message>
+      <source>Down</source>
+      <translation>Poshtë</translation>
+    </message>
+    <message>
+      <source>Left Analog Halfmode</source>
+      <translation>Mënyra e gjysmuar për levën e majtë</translation>
+    </message>
+    <message>
+      <source>hold to move left stick at half-speed</source>
+      <translation>mbaj shtypur për të lëvizur levën e majtë me gjysmën e shpejtësisë</translation>
+    </message>
+    <message>
+      <source>Left Stick</source>
+      <translation>Leva e Majtë</translation>
+    </message>
+    <message>
+      <source>Config Selection</source>
+      <translation>Zgjedhja e Konfigurimit</translation>
+    </message>
+    <message>
+      <source>Common Config</source>
+      <translation>Konfigurim i Përbashkët</translation>
+    </message>
+    <message>
+      <source>Use per-game configs</source>
+      <translation>Përdor konfigurime për secilën lojë</translation>
+    </message>
+    <message>
+      <source>L1</source>
+      <translation>L1</translation>
+    </message>
+    <message>
+      <source>L2</source>
+      <translation>L2</translation>
+    </message>
+    <message>
+      <source>Text Editor</source>
+      <translation>Redaktuesi i Tekstit</translation>
+    </message>
+    <message>
+      <source>Help</source>
+      <translation>Ndihmë</translation>
+    </message>
+    <message>
+      <source>R1</source>
+      <translation>R1</translation>
+    </message>
+    <message>
+      <source>R2</source>
+      <translation>R2</translation>
+    </message>
+    <message>
+      <source>L3</source>
+      <translation>L3</translation>
+    </message>
+    <message>
+      <source>Touchpad Click</source>
+      <translation>Klikim i Panelit me Prekje</translation>
+    </message>
+    <message>
+      <source>Mouse to Joystick</source>
+      <translation>Miu në Levë</translation>
+    </message>
+    <message>
+      <source>*press F7 ingame to activate</source>
+      <translation>*shtyp F7 gjatë lojës për ta aktivizuar</translation>
+    </message>
+    <message>
+      <source>R3</source>
+      <translation>R3</translation>
+    </message>
+    <message>
+      <source>Options</source>
+      <translation>Rregullime</translation>
+    </message>
+    <message>
+      <source>Mouse Movement Parameters</source>
+      <translation>Parametrat e Lëvizjes së Miut</translation>
+    </message>
+    <message>
+      <source>note: click Help Button/Special Keybindings for more information</source>
+      <translation>shënim: kliko Butonin e Ndihmës/Caktimet e Tasteve të Veçantë për më shumë informacion</translation>
+    </message>
+    <message>
+      <source>Face Buttons</source>
+      <translation>Butonat Kryesore</translation>
+    </message>
+    <message>
+      <source>Triangle</source>
+      <translation>Trekëndësh</translation>
+    </message>
+    <message>
+      <source>Square</source>
+      <translation>Katror</translation>
+    </message>
+    <message>
+      <source>Circle</source>
+      <translation>Rreth</translation>
+    </message>
+    <message>
+      <source>Cross</source>
+      <translation>Kryq</translation>
+    </message>
+    <message>
+      <source>Right Analog Halfmode</source>
+      <translation>Mënyra e gjysmuar për levën e djathtë</translation>
+    </message>
+    <message>
+      <source>hold to move right stick at half-speed</source>
+      <translation>mbaj shtypur për të lëvizur levën e djathtë me gjysmën e shpejtësisë</translation>
+    </message>
+    <message>
+      <source>Right Stick</source>
+      <translation>Leva e Djathtë</translation>
+    </message>
+    <message>
+      <source>Speed Offset (def 0.125):</source>
+      <translation>Ofset i Shpejtësisë (paracaktuar 0.125):</translation>
+    </message>
+    <message>
+      <source>Copy from Common Config</source>
+      <translation>Kopjo nga Konfigurimi i Përbashkët</translation>
+    </message>
+    <message>
+      <source>Deadzone Offset (def 0.50):</source>
+      <translation>Ofseti i Zonës së Vdekur (paracaktuar 0.50):</translation>
+    </message>
+    <message>
+      <source>Speed Multiplier (def 1.0):</source>
+      <translation>Shumëzuesi i Shpejtësisë (paracaktuar 1.0):</translation>
+    </message>
+    <message>
+      <source>Common Config Selected</source>
+      <translation>Konfigurimi i Përbashkët i Zgjedhur</translation>
+    </message>
+    <message>
+      <source>This button copies mappings from the Common Config to the currently selected profile, and cannot be used when the currently selected profile is the Common Config.</source>
+      <translation>Ky buton kopjon caktimet nga Konfigurimi i Përbashkët në profilin e zgjedhur aktualisht, dhe nuk mund të përdoret kur profili i zgjedhur aktualisht është Konfigurimi i Përbashkët.</translation>
+    </message>
+    <message>
+      <source>Copy values from Common Config</source>
+      <translation>Kopjo vlerat nga Konfigurimi i Përbashkët</translation>
+    </message>
+    <message>
+      <source>Do you want to overwrite existing mappings with the mappings from the Common Config?</source>
+      <translation>A dëshiron të mbishkruash caktimet ekzistuese me ato nga Konfigurimi i Përbashkët?</translation>
+    </message>
+    <message>
+      <source>Unable to Save</source>
+      <translation>Ruajtja Dështoi</translation>
+    </message>
+    <message>
+      <source>Cannot bind any unique input more than once</source>
+      <translation>Asnjë hyrje unike nuk mund të caktohet më shumë se një herë</translation>
+    </message>
+    <message>
+      <source>Press a key</source>
+      <translation>Shtyp një tast</translation>
+    </message>
+    <message>
+      <source>Cannot set mapping</source>
+      <translation>Caktimi nuk u vendos dot</translation>
+    </message>
+    <message>
+      <source>Mousewheel cannot be mapped to stick outputs</source>
+      <translation>Rrota e miut nuk mund të caktohet për daljet e levës</translation>
+    </message>
+    <message>
+      <source>Save</source>
+      <translation>Ruaj</translation>
+    </message>
+    <message>
+      <source>Apply</source>
+      <translation>Zbato</translation>
+    </message>
+    <message>
+      <source>Restore Defaults</source>
+      <translation>Rikthe Paracaktimet</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <translation>Anulo</translation>
     </message>
   </context>
   <context>
@@ -911,7 +1244,7 @@
     </message>
     <message>
       <source>Open shadPS4 Folder</source>
-      <translation>Hap dosjen e shadPS4</translation>
+      <translation>Hap Dosjen e shadPS4</translation>
     </message>
     <message>
       <source>Exit</source>
@@ -1261,19 +1594,11 @@
     </message>
     <message>
       <source>Emulator Language</source>
-      <translation>Gjuha e emulatorit</translation>
+      <translation>Gjuha e Emulatorit</translation>
     </message>
     <message>
       <source>Emulator</source>
       <translation>Emulatori</translation>
-    </message>
-    <message>
-      <source>Enable Fullscreen</source>
-      <translation>Aktivizo Ekranin e plotë</translation>
-    </message>
-    <message>
-      <source>Fullscreen Mode</source>
-      <translation>Mënyra me ekran të plotë</translation>
     </message>
     <message>
       <source>Enable Separate Update Folder</source>
@@ -1281,7 +1606,7 @@
     </message>
     <message>
       <source>Default tab when opening settings</source>
-      <translation>Skeda e parazgjedhur kur hapen cilësimet</translation>
+      <translation>Skeda e paracaktuar kur hapen cilësimet</translation>
     </message>
     <message>
       <source>Show Game Size In List</source>
@@ -1306,6 +1631,10 @@
     <message>
       <source>Trophy</source>
       <translation>Trofeu</translation>
+    </message>
+    <message>
+      <source>Open the custom trophy images/sounds folder</source>
+      <translation>Hap dosjen e imazheve/tingujve të trofeve të personalizuar</translation>
     </message>
     <message>
       <source>Logger</source>
@@ -1368,14 +1697,6 @@
       <translation>Pajisja e Grafikës</translation>
     </message>
     <message>
-      <source>Width</source>
-      <translation>Gjerësia</translation>
-    </message>
-    <message>
-      <source>Height</source>
-      <translation>Lartësia</translation>
-    </message>
-    <message>
       <source>Vblank Divider</source>
       <translation>Ndarës Vblank</translation>
     </message>
@@ -1385,7 +1706,7 @@
     </message>
     <message>
       <source>Enable Shaders Dumping</source>
-      <translation>Aktivizo Zbrazjen e Shaders-ave</translation>
+      <translation>Aktivizo Zbrazjen e Shader-ave</translation>
     </message>
     <message>
       <source>Enable NULL GPU</source>
@@ -1461,7 +1782,7 @@
     </message>
     <message>
       <source>Always Show Changelog</source>
-      <translation>Shfaq gjithmonë regjistrin e ndryshimeve</translation>
+      <translation>Shfaq gjithmonë ditarin e ndryshimeve</translation>
     </message>
     <message>
       <source>Update Channel</source>
@@ -1480,8 +1801,8 @@
       <translation>Muzika e titullit</translation>
     </message>
     <message>
-      <source>Disable Trophy Pop-ups</source>
-      <translation>Çaktivizo njoftimet për Trofetë</translation>
+      <source>Disable Trophy Notification</source>
+      <translation>Çaktivizo Njoftimin e Trofeut</translation>
     </message>
     <message>
       <source>Background Image</source>
@@ -1529,7 +1850,7 @@
     </message>
     <message>
       <source>Restore Defaults</source>
-      <translation>Rikthe paracaktimet</translation>
+      <translation>Rikthe Paracaktimet</translation>
     </message>
     <message>
       <source>Close</source>
@@ -1546,10 +1867,6 @@
     <message>
       <source>Emulator Language:\nSets the language of the emulator&apos;s user interface.</source>
       <translation>Gjuha e emulatorit:\nPërcakton gjuhën e ndërfaqes së përdoruesit të emulatorit.</translation>
-    </message>
-    <message>
-      <source>Enable Full Screen:\nAutomatically puts the game window into full-screen mode.\nThis can be toggled by pressing the F11 key.</source>
-      <translation>Aktivizo ekranin e plotë:\nVendos automatikisht dritaren e lojës në mënyrën e ekranit të plotë.\nKjo mund të aktivizohet duke shtypur tastin F11.</translation>
     </message>
     <message>
       <source>Enable Separate Update Folder:\nEnables installing game updates into a separate folder for easy management.\nThis can be manually created by adding the extracted update to the game folder with the name &quot;CUSA00000-UPDATE&quot; where the CUSA ID matches the game&apos;s ID.</source>
@@ -1605,7 +1922,7 @@
     </message>
     <message>
       <source>Back Button Behavior:\nSets the controller&apos;s back button to emulate tapping the specified position on the PS4 touchpad.</source>
-      <translation>Sjellja e butonit mbrapa:\nLejon të përcaktohet se në cilën pjesë të tastierës prekëse do të imitojë një prekje butoni mbrapa.</translation>
+      <translation>Sjellja e butonit mbrapa:\nLejon të përcaktohet se në cilën pjesë të panelit me prekje të dorezës do të imitojë një prekje butoni mbrapa.</translation>
     </message>
     <message>
       <source>Display Compatibility Data:\nDisplays game compatibility information in table view. Enable &quot;Update Compatibility On Startup&quot; to get up-to-date information.</source>
@@ -1633,15 +1950,15 @@
     </message>
     <message>
       <source>Touchpad Left</source>
-      <translation>Tastiera prekëse majtas</translation>
+      <translation>Paneli me Prekje Majtas</translation>
     </message>
     <message>
       <source>Touchpad Right</source>
-      <translation>Tastiera prekëse djathtas</translation>
+      <translation>Paneli me Prekje Djathtas</translation>
     </message>
     <message>
       <source>Touchpad Center</source>
-      <translation>Tastiera prekëse në qendër</translation>
+      <translation>Paneli me Prekje në Qendër</translation>
     </message>
     <message>
       <source>None</source>
@@ -1728,16 +2045,8 @@
       <translation>Shfleto:\nShfleto për të vendosur një dosje si shteg të ruajtjes së të dhënave.</translation>
     </message>
     <message>
-      <source>Borderless</source>
-      <translation>Pa kufij</translation>
-    </message>
-    <message>
-      <source>True</source>
-      <translation>Vërtetë</translation>
-    </message>
-    <message>
       <source>Release</source>
-      <translation>Botimi</translation>
+      <translation>Release</translation>
     </message>
     <message>
       <source>Nightly</source>
@@ -1779,12 +2088,124 @@
       <source>Directory to save data</source>
       <translation>Dosja për të ruajtur të dhënat</translation>
     </message>
+    <message>
+      <source>Video</source>
+      <translation>Video</translation>
+    </message>
+    <message>
+      <source>Display Mode</source>
+      <translation>Mënyra e Shfaqjes</translation>
+    </message>
+    <message>
+      <source>Windowed</source>
+      <translation>Dritare</translation>
+    </message>
+    <message>
+      <source>Fullscreen</source>
+      <translation>Ekran të plotë</translation>
+    </message>
+    <message>
+      <source>Fullscreen (Borderless)</source>
+      <translation>Ekran të plotë (Pa kufij)</translation>
+    </message>
+    <message>
+      <source>Window Size</source>
+      <translation>Masa e Dritares</translation>
+    </message>
+    <message>
+      <source>W:</source>
+      <translation>Gjer:</translation>
+    </message>
+    <message>
+      <source>H:</source>
+      <translation>Lart:</translation>
+    </message>
+    <message>
+      <source>Separate Log Files</source>
+      <translation>Skedarë të Ditarit të Ndarë</translation>
+    </message>
+    <message>
+      <source>Separate Log Files:\nWrites a separate logfile for each game.</source>
+      <translation>Skedarë të Ditarit të Ndarë:\nShkruan një skedar të ditarit të veçuar për secilën lojë.</translation>
+    </message>
+    <message>
+      <source>Trophy Notification Position</source>
+      <translation>Pozicioni i Njoftimit të Trofeve</translation>
+    </message>
+    <message>
+      <source>Left</source>
+      <translation>Majtas</translation>
+    </message>
+    <message>
+      <source>Right</source>
+      <translation>Djathtas</translation>
+    </message>
+    <message>
+      <source>Top</source>
+      <translation>Sipër</translation>
+    </message>
+    <message>
+      <source>Bottom</source>
+      <translation>Poshtë</translation>
+    </message>
+    <message>
+      <source>Notification Duration</source>
+      <translation>Kohëzgjatja e Njoftimit</translation>
+    </message>
+    <message>
+      <source>Portable User Folder</source>
+      <translation>Dosja Portative e Përdoruesit</translation>
+    </message>
+    <message>
+      <source>Create Portable User Folder from Common User Folder</source>
+      <translation>Krijo Dosje Portative të Përdoruesit nga Dosja e Përbashkët e Përdoruesit</translation>
+    </message>
+    <message>
+      <source>Portable user folder:\nStores shadPS4 settings and data that will be applied only to the shadPS4 build located in the current folder. Restart the app after creating the portable user folder to begin using it.</source>
+      <translation>Dosja portative e përdoruesit:\nRuan cilësimet dhe të dhënat të shadPS4 që do të zbatohen vetëm për konstruktin e shadPS4 të vendosur në dosjen aktuale. Rinis aplikacionin pasi të krijosh dosjen portative te përdoruesit për ta përdorur.</translation>
+    </message>
+    <message>
+      <source>Cannot create portable user folder</source>
+      <translation>Dosja portative e përdoruesit nuk u krijua dot</translation>
+    </message>
+    <message>
+      <source>%1 already exists</source>
+      <translation>%1 tashmë ekziston</translation>
+    </message>
+    <message>
+      <source>Portable user folder created</source>
+      <translation>Dosja portative e përdoruesit u krijua</translation>
+    </message>
+    <message>
+      <source>%1 successfully created.</source>
+      <translation>%1 u krijua me sukses.</translation>
+    </message>
+    <message>
+      <source>Open the custom trophy images/sounds folder:\nYou can add custom images to the trophies and an audio.\nAdd the files to custom_trophy with the following names:\ntrophy.wav OR trophy.mp3, bronze.png, gold.png, platinum.png, silver.png\nNote: The sound will only work in QT versions.</source>
+      <translation>Hap dosjen e imazheve/tingujve të trofeve të personalizuar:\nMund të shtosh imazhe të personalizuara për trofetë dhe një audio.\nShto skedarët në dosjen custom_trophy me emrat që vijojnë:\ntrophy.wav ose trophy.mp3, bronze.png, gold.png, platinum.png, silver.png\nShënim: Tingulli do të punojë vetëm në versionet QT.</translation>
+    </message>
   </context>
   <context>
     <name>TrophyViewer</name>
     <message>
       <source>Trophy Viewer</source>
       <translation>Shikuesi i Trofeve</translation>
+    </message>
+    <message>
+      <source>Progress</source>
+      <translation>Ecuria</translation>
+    </message>
+    <message>
+      <source>Show Earned Trophies</source>
+      <translation>Shfaq Trofetë që janë fituar</translation>
+    </message>
+    <message>
+      <source>Show Not Earned Trophies</source>
+      <translation>Shfaq Trofetë që nuk janë fituar</translation>
+    </message>
+    <message>
+      <source>Show Hidden Trophies</source>
+      <translation>Shfaq Trofetë e Fshehur</translation>
     </message>
   </context>
 </TS>

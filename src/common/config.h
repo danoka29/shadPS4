@@ -41,6 +41,7 @@ std::string getChooseHomeTab();
 
 s16 getCursorState();
 int getCursorHideTimeout();
+double getTrophyNotificationDuration();
 std::string getBackButtonBehavior();
 bool getUseSpecialPad();
 int getSpecialPadClass();
@@ -62,6 +63,7 @@ bool collectShadersForDebug();
 bool showSplash();
 bool autoUpdate();
 bool alwaysShowChangelog();
+std::string sideTrophy();
 bool nullGpu();
 bool copyGPUCmdBuffers();
 bool dumpShaders();
@@ -80,6 +82,7 @@ void setCollectShaderForDebug(bool enable);
 void setShowSplash(bool enable);
 void setAutoUpdate(bool enable);
 void setAlwaysShowChangelog(bool enable);
+void setSideTrophy(std::string side);
 void setNullGpu(bool enable);
 void setAllowHDR(bool enable);
 void setCopyGPUCmdBuffers(bool enable);
@@ -109,6 +112,7 @@ void setShowBackgroundImage(bool show);
 
 void setCursorState(s16 cursorState);
 void setCursorHideTimeout(int newcursorHideTimeout);
+void setTrophyNotificationDuration(double newTrophyNotificationDuration);
 void setBackButtonBehavior(const std::string& type);
 void setUseSpecialPad(bool use);
 void setSpecialPadClass(int type);
@@ -116,7 +120,8 @@ void setIsMotionControlsEnabled(bool use);
 
 void setLogType(const std::string& type);
 void setLogFilter(const std::string& type);
-
+void setSeparateLogFilesEnabled(bool enabled);
+bool getSeparateLogFilesEnabled();
 void setVkValidation(bool enable);
 void setVkSyncValidation(bool enable);
 void setRdocEnabled(bool enable);

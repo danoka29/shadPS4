@@ -58,6 +58,8 @@ public:
     explicit Translator(IR::Block* block_, Info& info, const RuntimeInfo& runtime_info,
                         const Profile& profile);
 
+    void TranslateInstruction(const GcnInst& inst, u32 pc);
+
     // Instruction categories
     void EmitPrologue();
     void EmitFetch(const GcnInst& inst);
@@ -79,6 +81,7 @@ public:
     void S_ADD_U32(const GcnInst& inst);
     void S_SUB_U32(const GcnInst& inst);
     void S_ADD_I32(const GcnInst& inst);
+    void S_SUB_I32(const GcnInst& inst);
     void S_ADDC_U32(const GcnInst& inst);
     void S_MIN_U32(bool is_signed, const GcnInst& inst);
     void S_MAX_U32(bool is_signed, const GcnInst& inst);
@@ -275,10 +278,9 @@ public:
 
     // Buffer Memory
     // MUBUF / MTBUF
-    void BUFFER_LOAD(u32 num_dwords, bool is_typed, const GcnInst& inst);
-    void BUFFER_LOAD_FORMAT(u32 num_dwords, const GcnInst& inst);
-    void BUFFER_STORE(u32 num_dwords, bool is_typed, const GcnInst& inst);
-    void BUFFER_STORE_FORMAT(u32 num_dwords, const GcnInst& inst);
+    void BUFFER_LOAD(u32 num_dwords, bool is_inst_typed, bool is_buffer_typed, const GcnInst& inst);
+    void BUFFER_STORE(u32 num_dwords, bool is_inst_typed, bool is_buffer_typed,
+                      const GcnInst& inst);
     void BUFFER_ATOMIC(AtomicOp op, const GcnInst& inst);
 
     // Image Memory

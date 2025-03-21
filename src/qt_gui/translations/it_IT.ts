@@ -10,10 +10,6 @@
       <translation>Riguardo shadPS4</translation>
     </message>
     <message>
-      <source>shadPS4</source>
-      <translation>shadPS4</translation>
-    </message>
-    <message>
       <source>shadPS4 is an experimental open-source emulator for the PlayStation 4.</source>
       <translation>shadPS4 è un emulatore sperimentale open-source per PlayStation 4.</translation>
     </message>
@@ -414,10 +410,6 @@
       <translation>Configura Comandi</translation>
     </message>
     <message>
-      <source>Control Settings</source>
-      <translation>Impostazioni dei Comandi</translation>
-    </message>
-    <message>
       <source>D-Pad</source>
       <translation>Croce direzionale</translation>
     </message>
@@ -468,14 +460,6 @@
     <message>
       <source>L2 / LT</source>
       <translation>L2 / LT</translation>
-    </message>
-    <message>
-      <source>KBM Controls</source>
-      <translation>Controlli Tastiera/Mouse</translation>
-    </message>
-    <message>
-      <source>KBM Editor</source>
-      <translation>Editor Tastiera/Mouse</translation>
     </message>
     <message>
       <source>Back</source>
@@ -532,6 +516,101 @@
     <message>
       <source>Right Stick</source>
       <translation>Levetta Destra</translation>
+    </message>
+    <message>
+      <source>Color Adjustment</source>
+      <translation>Regolazione Colore</translation>
+    </message>
+    <message>
+      <source>R:</source>
+      <translation>R:</translation>
+    </message>
+    <message>
+      <source>G:</source>
+      <translation>V:</translation>
+    </message>
+    <message>
+      <source>B:</source>
+      <translation>B:</translation>
+    </message>
+    <message>
+      <source>Override Lightbar Color</source>
+      <translation>Sostituisci Colore Lightbar</translation>
+    </message>
+    <message>
+      <source>Override Color</source>
+      <translation>Sostituisci Colore</translation>
+    </message>
+    <message>
+      <source>Unable to Save</source>
+      <translation>Impossibile Salvare</translation>
+    </message>
+    <message>
+      <source>Cannot bind axis values more than once</source>
+      <translation>Impossibile associare i valori degli assi più di una volta</translation>
+    </message>
+    <message>
+      <source>Save</source>
+      <translation>Salva</translation>
+    </message>
+    <message>
+      <source>Apply</source>
+      <translation>Applica</translation>
+    </message>
+    <message>
+      <source>Restore Defaults</source>
+      <translation>Ripristina Impostazioni Predefinite</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <translation>Annulla</translation>
+    </message>
+  </context>
+  <context>
+    <name>EditorDialog</name>
+    <message>
+      <source>Edit Keyboard + Mouse and Controller input bindings</source>
+      <translation>Modifica le associazioni di input di tastiera + mouse e controller</translation>
+    </message>
+    <message>
+      <source>Use Per-Game configs</source>
+      <translation>Usa Configurazioni Per Gioco</translation>
+    </message>
+    <message>
+      <source>Error</source>
+      <translation>Errore</translation>
+    </message>
+    <message>
+      <source>Could not open the file for reading</source>
+      <translation>Impossibile aprire il file per la lettura</translation>
+    </message>
+    <message>
+      <source>Could not open the file for writing</source>
+      <translation>Impossibile aprire il file per la scrittura</translation>
+    </message>
+    <message>
+      <source>Save Changes</source>
+      <translation>Salva Modifiche</translation>
+    </message>
+    <message>
+      <source>Do you want to save changes?</source>
+      <translation>Vuoi salvare le modifiche?</translation>
+    </message>
+    <message>
+      <source>Help</source>
+      <translation>Aiuto</translation>
+    </message>
+    <message>
+      <source>Do you want to reset your custom default config to the original default config?</source>
+      <translation>Vuoi reimpostare la configurazione predefinita personalizzata alla configurazione predefinita originale?</translation>
+    </message>
+    <message>
+      <source>Do you want to reset this config to your custom default config?</source>
+      <translation>Vuoi reimpostare questa configurazione alla configurazione predefinita personalizzata?</translation>
+    </message>
+    <message>
+      <source>Reset to Default</source>
+      <translation>Ripristina a Predefinito</translation>
     </message>
   </context>
   <context>
@@ -768,6 +847,10 @@
       <translation>Elimina DLC</translation>
     </message>
     <message>
+      <source>Delete Trophy</source>
+      <translation>Elimina Trofei</translation>
+    </message>
+    <message>
       <source>Compatibility...</source>
       <translation>Compatibilità...</translation>
     </message>
@@ -844,6 +927,10 @@
       <translation>Questo gioco non ha nessuna cartella di aggiornamento da aprire!</translation>
     </message>
     <message>
+      <source>No log file found for this game!</source>
+      <translation>Nessun file di log trovato per questo gioco!</translation>
+    </message>
+    <message>
       <source>Failed to convert icon.</source>
       <translation>Impossibile convertire l'icona.</translation>
     </message>
@@ -852,8 +939,43 @@
       <translation>Questo gioco non ha alcun salvataggio dati da eliminare!</translation>
     </message>
     <message>
+      <source>This game has no saved trophies to delete!</source>
+      <translation>Questo gioco non ha nessun trofeo salvato da eliminare!</translation>
+    </message>
+    <message>
       <source>Save Data</source>
       <translation>Dati Salvataggio</translation>
+    </message>
+    <message>
+      <source>Trophy</source>
+      <translation>Trofei</translation>
+    </message>
+    <message>
+      <source>SFO Viewer for </source>
+      <translation>Visualizzatore SFO per </translation>
+    </message>
+  </context>
+  <context>
+    <name>HelpDialog</name>
+    <message>
+      <source>Quickstart</source>
+      <translation>Avvio rapido</translation>
+    </message>
+    <message>
+      <source>FAQ</source>
+      <translation>FAQ</translation>
+    </message>
+    <message>
+      <source>Syntax</source>
+      <translation>Sintassi</translation>
+    </message>
+    <message>
+      <source>Special Bindings</source>
+      <translation>Associazioni Speciali</translation>
+    </message>
+    <message>
+      <source>Keybindings</source>
+      <translation>Associazioni dei pulsanti</translation>
     </message>
   </context>
   <context>
@@ -873,6 +995,217 @@
     <message>
       <source>Delete PKG File on Install</source>
       <translation>Elimina file PKG dopo Installazione</translation>
+    </message>
+  </context>
+  <context>
+    <name>KBMSettings</name>
+    <message>
+      <source>Configure Controls</source>
+      <translation>Configura Comandi</translation>
+    </message>
+    <message>
+      <source>D-Pad</source>
+      <translation>Croce direzionale</translation>
+    </message>
+    <message>
+      <source>Up</source>
+      <translation>Su</translation>
+    </message>
+    <message>
+      <source>unmapped</source>
+      <translation>non mappato</translation>
+    </message>
+    <message>
+      <source>Left</source>
+      <translation>Sinistra</translation>
+    </message>
+    <message>
+      <source>Right</source>
+      <translation>Destra</translation>
+    </message>
+    <message>
+      <source>Down</source>
+      <translation>Giù</translation>
+    </message>
+    <message>
+      <source>Left Analog Halfmode</source>
+      <translation>Mezza Modalità Analogico Sinistra</translation>
+    </message>
+    <message>
+      <source>hold to move left stick at half-speed</source>
+      <translation>tieni premuto per muovere la levetta analogica sinistra a metà velocità</translation>
+    </message>
+    <message>
+      <source>Left Stick</source>
+      <translation>Levetta Sinistra</translation>
+    </message>
+    <message>
+      <source>Config Selection</source>
+      <translation>Selezione Configurazione</translation>
+    </message>
+    <message>
+      <source>Common Config</source>
+      <translation>Configurazione Comune</translation>
+    </message>
+    <message>
+      <source>Use per-game configs</source>
+      <translation>Usa configurazioni per gioco</translation>
+    </message>
+    <message>
+      <source>L1</source>
+      <translation>L1</translation>
+    </message>
+    <message>
+      <source>L2</source>
+      <translation>L2</translation>
+    </message>
+    <message>
+      <source>Text Editor</source>
+      <translation>Editor Testuale</translation>
+    </message>
+    <message>
+      <source>Help</source>
+      <translation>Aiuto</translation>
+    </message>
+    <message>
+      <source>R1</source>
+      <translation>R1</translation>
+    </message>
+    <message>
+      <source>R2</source>
+      <translation>R2</translation>
+    </message>
+    <message>
+      <source>L3</source>
+      <translation>L3</translation>
+    </message>
+    <message>
+      <source>Touchpad Click</source>
+      <translation>Click Touchpad</translation>
+    </message>
+    <message>
+      <source>Mouse to Joystick</source>
+      <translation>Mouse a Joystick</translation>
+    </message>
+    <message>
+      <source>*press F7 ingame to activate</source>
+      <translation>*premere F7 in gioco per attivare</translation>
+    </message>
+    <message>
+      <source>R3</source>
+      <translation>R3</translation>
+    </message>
+    <message>
+      <source>Options</source>
+      <translation>Opzioni</translation>
+    </message>
+    <message>
+      <source>Mouse Movement Parameters</source>
+      <translation>Parametri Movimento Del Mouse</translation>
+    </message>
+    <message>
+      <source>note: click Help Button/Special Keybindings for more information</source>
+      <translation>nota: cliccare sul Pulsante Aiuto/Associazioni Speciali dei Tasti per maggiori informazioni</translation>
+    </message>
+    <message>
+      <source>Face Buttons</source>
+      <translation>Pulsanti Frontali</translation>
+    </message>
+    <message>
+      <source>Triangle</source>
+      <translation>Triangolo</translation>
+    </message>
+    <message>
+      <source>Square</source>
+      <translation>Quadrato</translation>
+    </message>
+    <message>
+      <source>Circle</source>
+      <translation>Cerchio</translation>
+    </message>
+    <message>
+      <source>Cross</source>
+      <translation>Croce</translation>
+    </message>
+    <message>
+      <source>Right Analog Halfmode</source>
+      <translation>Mezza Modalità Analogico Destra</translation>
+    </message>
+    <message>
+      <source>hold to move right stick at half-speed</source>
+      <translation>tieni premuto per muovere la levetta analogica destra a metà velocità</translation>
+    </message>
+    <message>
+      <source>Right Stick</source>
+      <translation>Levetta Destra</translation>
+    </message>
+    <message>
+      <source>Speed Offset (def 0.125):</source>
+      <translation>Scostamento Velocità (def 0,125):</translation>
+    </message>
+    <message>
+      <source>Copy from Common Config</source>
+      <translation>Copia da Configurazione Comune</translation>
+    </message>
+    <message>
+      <source>Deadzone Offset (def 0.50):</source>
+      <translation>Scostamento Zona Morta (def 0,50):</translation>
+    </message>
+    <message>
+      <source>Speed Multiplier (def 1.0):</source>
+      <translation>Moltiplicatore Di Velocità (def 1,0):</translation>
+    </message>
+    <message>
+      <source>Common Config Selected</source>
+      <translation>Configurazione Comune Selezionata</translation>
+    </message>
+    <message>
+      <source>This button copies mappings from the Common Config to the currently selected profile, and cannot be used when the currently selected profile is the Common Config.</source>
+      <translation>Questo pulsante copia le mappature dalla Configurazione Comune al profilo attualmente selezionato, e non può essere usato quando il profilo attualmente selezionato è Configurazione Comune.</translation>
+    </message>
+    <message>
+      <source>Copy values from Common Config</source>
+      <translation>Copia valori da Configurazione Comune</translation>
+    </message>
+    <message>
+      <source>Do you want to overwrite existing mappings with the mappings from the Common Config?</source>
+      <translation>Vuoi sovrascrivere le mappature esistenti con le mappature dalla Configurazione Comune?</translation>
+    </message>
+    <message>
+      <source>Unable to Save</source>
+      <translation>Impossibile Salvare</translation>
+    </message>
+    <message>
+      <source>Cannot bind any unique input more than once</source>
+      <translation>Non è possibile associare qualsiasi input univoco più di una volta</translation>
+    </message>
+    <message>
+      <source>Press a key</source>
+      <translation>Premi un tasto</translation>
+    </message>
+    <message>
+      <source>Cannot set mapping</source>
+      <translation>Impossibile impostare la mappatura</translation>
+    </message>
+    <message>
+      <source>Mousewheel cannot be mapped to stick outputs</source>
+      <translation>La rotella del mouse non può essere associata ai comandi della levetta analogica</translation>
+    </message>
+    <message>
+      <source>Save</source>
+      <translation>Salva</translation>
+    </message>
+    <message>
+      <source>Apply</source>
+      <translation>Applica</translation>
+    </message>
+    <message>
+      <source>Restore Defaults</source>
+      <translation>Ripristina Impostazioni Predefinite</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <translation>Annulla</translation>
     </message>
   </context>
   <context>
@@ -1268,14 +1601,6 @@
       <translation>Emulatore</translation>
     </message>
     <message>
-      <source>Enable Fullscreen</source>
-      <translation>Abilita Schermo Intero</translation>
-    </message>
-    <message>
-      <source>Fullscreen Mode</source>
-      <translation>Modalità Schermo Intero</translation>
-    </message>
-    <message>
       <source>Enable Separate Update Folder</source>
       <translation>Abilita Cartella Aggiornamenti Separata</translation>
     </message>
@@ -1306,6 +1631,10 @@
     <message>
       <source>Trophy</source>
       <translation>Trofei</translation>
+    </message>
+    <message>
+      <source>Open the custom trophy images/sounds folder</source>
+      <translation>Apri la cartella personalizzata delle immagini/suoni dei trofei</translation>
     </message>
     <message>
       <source>Logger</source>
@@ -1366,14 +1695,6 @@
     <message>
       <source>Graphics Device</source>
       <translation>Scheda Grafica</translation>
-    </message>
-    <message>
-      <source>Width</source>
-      <translation>Larghezza</translation>
-    </message>
-    <message>
-      <source>Height</source>
-      <translation>Altezza</translation>
     </message>
     <message>
       <source>Vblank Divider</source>
@@ -1480,8 +1801,8 @@
       <translation>Musica del Titolo</translation>
     </message>
     <message>
-      <source>Disable Trophy Pop-ups</source>
-      <translation>Disabilita Notifica Trofei</translation>
+      <source>Disable Trophy Notification</source>
+      <translation>Disabilita Notifiche Trofei</translation>
     </message>
     <message>
       <source>Background Image</source>
@@ -1548,10 +1869,6 @@
       <translation>Lingua dell&apos;Emulatore:\nImposta la lingua dell&apos;interfaccia utente dell&apos;emulatore.</translation>
     </message>
     <message>
-      <source>Enable Full Screen:\nAutomatically puts the game window into full-screen mode.\nThis can be toggled by pressing the F11 key.</source>
-      <translation>Abilita Schermo Intero:\nMetti automaticamente la finestra di gioco in modalità schermo intero.\nQuesto può essere disattivato premendo il tasto F11.</translation>
-    </message>
-    <message>
       <source>Enable Separate Update Folder:\nEnables installing game updates into a separate folder for easy management.\nThis can be manually created by adding the extracted update to the game folder with the name &quot;CUSA00000-UPDATE&quot; where the CUSA ID matches the game&apos;s ID.</source>
       <translation>Abilita Cartella Aggiornamenti Separata:\nAbilita l&apos;installazione degli aggiornamenti in una cartella separata per una più facile gestione.</translation>
     </message>
@@ -1581,7 +1898,7 @@
     </message>
     <message>
       <source>Update:\nRelease: Official versions released every month that may be very outdated, but are more reliable and tested.\nNightly: Development versions that have all the latest features and fixes, but may contain bugs and are less stable.</source>
-      <translation>Aggiornamento:\nRelease: Versioni ufficiali rilasciate ogni mese che potrebbero essere molto datate, ma sono più affidabili e testate.\nNightly: Versioni di sviluppo che hanno tutte le ultime funzionalità e correzioni, ma potrebbero contenere bug e sono meno stabili.</translation>
+      <translation>Aggiornamento:\nRilascio: Versioni ufficiali rilasciate ogni mese che possono essere molto obsolete, ma sono più affidabili e testati.\nNotturno: Le versioni di sviluppo che hanno tutte le ultime funzionalità e correzioni, ma possono contenere bug e sono meno stabili.</translation>
     </message>
     <message>
       <source>Background Image:\nControl the opacity of the game background image.</source>
@@ -1649,7 +1966,7 @@
     </message>
     <message>
       <source>Graphics Device:\nOn multiple GPU systems, select the GPU the emulator will use from the drop down list,\nor select &quot;Auto Select&quot; to automatically determine it.</source>
-      <translation>Dispositivo Grafico:\nIn sistemi con più GPU, seleziona la GPU che l&apos;emulatore utilizzerà dall&apos;elenco a discesa,\no seleziona &quot;Auto Select&quot; per determinarlo automaticamente.</translation>
+      <translation>Dispositivo Grafico:\nIn sistemi con più GPU, seleziona la GPU che l&apos;emulatore utilizzerà dall&apos;elenco a discesa,\no seleziona &quot;Selezione Automatica&quot; per determinarlo automaticamente.</translation>
     </message>
     <message>
       <source>Width/Height:\nSets the size of the emulator window at launch, which can be resized during gameplay.\nThis is different from the in-game resolution.</source>
@@ -1728,14 +2045,6 @@
       <translation>Esplora:\nEsplora una cartella da impostare come percorso dati di salvataggio.</translation>
     </message>
     <message>
-      <source>Borderless</source>
-      <translation>Finestra senza bordi</translation>
-    </message>
-    <message>
-      <source>True</source>
-      <translation>Vero</translation>
-    </message>
-    <message>
       <source>Release</source>
       <translation>Rilascio</translation>
     </message>
@@ -1779,12 +2088,124 @@
       <source>Directory to save data</source>
       <translation>Cartella per salvare i dati</translation>
     </message>
+    <message>
+      <source>Video</source>
+      <translation>Video</translation>
+    </message>
+    <message>
+      <source>Display Mode</source>
+      <translation>Modalità di visualizzazione</translation>
+    </message>
+    <message>
+      <source>Windowed</source>
+      <translation>In finestra</translation>
+    </message>
+    <message>
+      <source>Fullscreen</source>
+      <translation>Schermo Intero</translation>
+    </message>
+    <message>
+      <source>Fullscreen (Borderless)</source>
+      <translation>Schermo Intero (Senza Bordi)</translation>
+    </message>
+    <message>
+      <source>Window Size</source>
+      <translation>Dimensione Finestra</translation>
+    </message>
+    <message>
+      <source>W:</source>
+      <translation>L:</translation>
+    </message>
+    <message>
+      <source>H:</source>
+      <translation>A:</translation>
+    </message>
+    <message>
+      <source>Separate Log Files</source>
+      <translation>File Di Registro Separati</translation>
+    </message>
+    <message>
+      <source>Separate Log Files:\nWrites a separate logfile for each game.</source>
+      <translation>File di registro separati:\nScrive un file di registro separato per ogni gioco.</translation>
+    </message>
+    <message>
+      <source>Trophy Notification Position</source>
+      <translation>Posizione Notifica Trofei</translation>
+    </message>
+    <message>
+      <source>Left</source>
+      <translation>Sinistra</translation>
+    </message>
+    <message>
+      <source>Right</source>
+      <translation>Destra</translation>
+    </message>
+    <message>
+      <source>Top</source>
+      <translation>In alto</translation>
+    </message>
+    <message>
+      <source>Bottom</source>
+      <translation>In basso</translation>
+    </message>
+    <message>
+      <source>Notification Duration</source>
+      <translation>Durata Notifica</translation>
+    </message>
+    <message>
+      <source>Portable User Folder</source>
+      <translation>Cartella Utente Portatile</translation>
+    </message>
+    <message>
+      <source>Create Portable User Folder from Common User Folder</source>
+      <translation>Crea una Cartella Utente Portatile dalla Cartella Comune Utente</translation>
+    </message>
+    <message>
+      <source>Portable user folder:\nStores shadPS4 settings and data that will be applied only to the shadPS4 build located in the current folder. Restart the app after creating the portable user folder to begin using it.</source>
+      <translation>Cartella utente portatile:\nMemorizza le impostazioni e i dati shadPS4 che saranno applicati solo alla build shadPS4 situata nella cartella attuale. Riavviare l'applicazione dopo aver creato la cartella utente portatile per iniziare a usarla.</translation>
+    </message>
+    <message>
+      <source>Cannot create portable user folder</source>
+      <translation>Impossibile creare la cartella utente portatile</translation>
+    </message>
+    <message>
+      <source>%1 already exists</source>
+      <translation>%1: esiste già</translation>
+    </message>
+    <message>
+      <source>Portable user folder created</source>
+      <translation>Cartella utente portatile creata</translation>
+    </message>
+    <message>
+      <source>%1 successfully created.</source>
+      <translation>%1 creato con successo.</translation>
+    </message>
+    <message>
+      <source>Open the custom trophy images/sounds folder:\nYou can add custom images to the trophies and an audio.\nAdd the files to custom_trophy with the following names:\ntrophy.wav OR trophy.mp3, bronze.png, gold.png, platinum.png, silver.png\nNote: The sound will only work in QT versions.</source>
+      <translation>Apri la cartella personalizzata delle immagini/suoni trofei:\nÈ possibile aggiungere immagini personalizzate ai trofei e un audio.\nAggiungi i file a custom_trophy con i seguenti nomi:\ntrophy.wav OPPURE trophy.mp3, bronze.png, gold.png, platinum.png, silver.png\nNota: Il suono funzionerà solo nelle versioni QT.</translation>
+    </message>
   </context>
   <context>
     <name>TrophyViewer</name>
     <message>
       <source>Trophy Viewer</source>
       <translation>Visualizzatore Trofei</translation>
+    </message>
+    <message>
+      <source>Progress</source>
+      <translation>Progresso</translation>
+    </message>
+    <message>
+      <source>Show Earned Trophies</source>
+      <translation>Mostra Trofei Guadagnati</translation>
+    </message>
+    <message>
+      <source>Show Not Earned Trophies</source>
+      <translation>Mostra Trofei Non Guadagnati</translation>
+    </message>
+    <message>
+      <source>Show Hidden Trophies</source>
+      <translation>Mostra Trofei Nascosti</translation>
     </message>
   </context>
 </TS>
