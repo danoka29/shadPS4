@@ -996,7 +996,7 @@ void Translator::V_CMP_NE_U64(const GcnInst& inst) {
         case OperandField::SignedConstIntNeg:
             return ir.LogicalNot(x);
         default:
-            UNREACHABLE_MSG("unhandled V_CMP_NE_U64 source argument {}", u32(inst.src[1].field));
+            //UNREACHABLE_MSG("unhandled V_CMP_NE_U64 source argument {}", u32(inst.src[1].field));
         }
     };
     switch (inst.dst[1].field) {

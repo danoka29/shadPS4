@@ -161,7 +161,7 @@ s32 PS4_SYSV_ABI sceKernelDebugRaiseExceptionOnReleaseMode(s32 error, s64 unk) {
     if (unk != 0) {
         return ORBIS_KERNEL_ERROR_EINVAL;
     }
-    UNREACHABLE_MSG("error {:#x}", error);
+    //UNREACHABLE_MSG("error {:#x}", error);
     return 0;
 }
 

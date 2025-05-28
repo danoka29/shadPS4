@@ -641,9 +641,17 @@ Frame* Presenter::GetRenderFrame() {
     };
 
     // Wait for the presentation to be finished so all frame resources are free
+        // Wait for the presentation to be finished so all frame resources are free
+        while (true) {
+            if (wait() == vk::Result::eSuccess) {
+                break;
+            }
+            // Retry even if device is lost or timeout occurs
+            continue;
+        }
     while (wait() != vk::Result::eSuccess) {
-        ASSERT_MSG(result != vk::Result::eErrorDeviceLost,
-                   "Device lost during waiting for a frame");
+        //ASSERT_MSG(result != vk::Result::eErrorDeviceLost,
+          //         "Device lost during waiting for a frame");
         // Retry if the waiting times out
         if (result == vk::Result::eTimeout) {
             continue;

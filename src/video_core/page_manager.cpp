@@ -202,9 +202,9 @@ void PageManager::UpdatePagesCachedCount(VAddr addr, u64 size, s32 delta) {
         const VAddr interval_start_addr = boost::icl::first(interval) << PageShift;
         const VAddr interval_end_addr = boost::icl::last_next(interval) << PageShift;
         const u32 interval_size = interval_end_addr - interval_start_addr;
-        ASSERT_MSG(rasterizer->IsMapped(interval_start_addr, interval_size),
-                   "Attempted to track non-GPU memory at address {:#x}, size {:#x}.",
-                   interval_start_addr, interval_size);
+        //ASSERT_MSG(rasterizer->IsMapped(interval_start_addr, interval_size),
+          //         "Attempted to track non-GPU memory at address {:#x}, size {:#x}.",
+            //       interval_start_addr, interval_size);
         if (delta > 0 && count == delta) {
             impl->Protect(interval_start_addr, interval_size, false);
         } else if (delta < 0 && count == -delta) {

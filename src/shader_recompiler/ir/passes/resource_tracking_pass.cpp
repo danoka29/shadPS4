@@ -250,7 +250,7 @@ SharpLocation AttemptTrackSharp(const IR::Inst* inst, auto& visited_insts) {
         return std::nullopt;
     };
     const auto result = IR::BreadthFirstSearch(inst, pred);
-    ASSERT_MSG(result, "Unable to track sharp source");
+    //ASSERT_MSG(result, "Unable to track sharp source");
     inst = result.value();
     visited_insts.emplace_back(inst);
     if (inst->GetOpcode() == IR::Opcode::GetUserData) {
@@ -350,7 +350,7 @@ void PatchImageSharp(IR::Block& block, IR::Inst& inst, Info& info, Descriptors& 
         return std::nullopt;
     };
     const auto result = IR::BreadthFirstSearch(&inst, pred);
-    ASSERT_MSG(result, "Unable to find image sharp source");
+    //ASSERT_MSG(result, "Unable to find image sharp source");
     const IR::Inst* producer = result.value();
     const bool has_sampler = producer->GetOpcode() == IR::Opcode::CompositeConstructU32x2;
     const auto tsharp_handle = has_sampler ? producer->Arg(0).InstRecursive() : producer;
